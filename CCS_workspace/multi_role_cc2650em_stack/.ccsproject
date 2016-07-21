@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<?ccsproject version="1.0"?>
+<projectOptions>
+	<deviceVariant value="Cortex M.CC2650F128"/>
+	<deviceFamily value="TMS470"/>
+	<deviceEndianness value="little"/>
+	<codegenToolVersion value="15.12.3.LTS"/>
+	<isElfFormat value="true"/>
+	<connection value="common/targetdb/connections/TIXDS100v3_Dot7_Connection.xml"/>
+	<linkerCommandFile value="cc26xx_stack.cmd"/>
+	<rts value="libc.a"/>
+	<createSlaveProjects value=""/>
+	<origin value="D:\Drive\workspaces\GIT\CLIMB\climb.stfirmware_BLEstack2.2\ble_sdk_2_02_00_31\examples\cc2650em\CLIMB_MASTER\ccs\stack\multi_role_cc2650em_stack.projectspec"/>
+	<templateProperties value="id=multi_role_cc2650em_stack.projectspec.multi_role_cc2650em_stack,target=ti.targets.arm.elf.M3,platform=ti.platforms.simplelink:CC2650F128,buildProfile=release,isHybrid=true,configuroOptions=--compileOptions &quot;${COMPILER_FLAGS} &quot; ,"/>
+</projectOptions>
