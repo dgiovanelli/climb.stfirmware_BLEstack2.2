@@ -6,7 +6,7 @@
 	<deviceEndianness value="little"/>
 	<codegenToolVersion value="15.12.3.LTS"/>
 	<isElfFormat value="true"/>
-	<connection value="common/targetdb/connections/TIXDS110_Connection.xml"/>
+	<connection value="common/targetdb/connections/TIXDS100v3_Dot7_Connection.xml"/>
 	<linkerCommandFile value="cc26xx_app.cmd"/>
 	<rts value="libc.a"/>
 	<createSlaveProjects value=""/>

@@ -97,6 +97,7 @@
 								<option id="com.ti.ccstudio.buildDefinitions.TMS470_15.12.compilerID.PLAIN_CHAR.2129601206" name="Specify how to treat plain chars (signed/unsigned) (--plain_char)" superClass="com.ti.ccstudio.buildDefinitions.TMS470_15.12.compilerID.PLAIN_CHAR" value="com.ti.ccstudio.buildDefinitions.TMS470_15.12.compilerID.PLAIN_CHAR.unsigned" valueType="enumerated"/>
 								<option id="com.ti.ccstudio.buildDefinitions.TMS470_15.12.compilerID.DEFINE.1319227796" name="Pre-define NAME (--define, -D)" superClass="com.ti.ccstudio.buildDefinitions.TMS470_15.12.compilerID.DEFINE" valueType="definedSymbols">
 									<listOptionValue builtIn="false" value="xPRINTF_ENABLED"/>
+									<listOptionValue builtIn="false" value="HIGH_PERFORMANCE"/>
 									<listOptionValue builtIn="false" value="xINCLUDE_BATTERY_SERVICE"/>
 									<listOptionValue builtIn="false" value="LED_VERBOSITY=2"/>
 									<listOptionValue builtIn="false" value="GAP_ROLE_ABORT"/>
