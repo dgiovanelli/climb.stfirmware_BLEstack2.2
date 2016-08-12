@@ -79,7 +79,7 @@
 									<listOptionValue builtIn="false" value="&quot;${PROJECT_IMPORT_LOC}/../config/ccs_compiler_defines.bcfg&quot;"/>
 								</option>
 								<option id="com.ti.ccstudio.buildDefinitions.TMS470_15.12.compilerID.FLOAT_SUPPORT.1576678122" name="Specify floating point support (--float_support)" superClass="com.ti.ccstudio.buildDefinitions.TMS470_15.12.compilerID.FLOAT_SUPPORT" value="com.ti.ccstudio.buildDefinitions.TMS470_15.12.compilerID.FLOAT_SUPPORT.vfplib" valueType="enumerated"/>
-								<option id="com.ti.ccstudio.buildDefinitions.TMS470_15.12.compilerID.OPT_LEVEL.869438630" name="Optimization level (--opt_level, -O)" superClass="com.ti.ccstudio.buildDefinitions.TMS470_15.12.compilerID.OPT_LEVEL" value="com.ti.ccstudio.buildDefinitions.TMS470_15.12.compilerID.OPT_LEVEL.4" valueType="enumerated"/>
+								<option id="com.ti.ccstudio.buildDefinitions.TMS470_15.12.compilerID.OPT_LEVEL.869438630" name="Optimization level (--opt_level, -O)" superClass="com.ti.ccstudio.buildDefinitions.TMS470_15.12.compilerID.OPT_LEVEL" value="com.ti.ccstudio.buildDefinitions.TMS470_15.12.compilerID.OPT_LEVEL.0" valueType="enumerated"/>
 								<option id="com.ti.ccstudio.buildDefinitions.TMS470_15.12.compilerID.OPT_FOR_SPEED.814016731" name="Speed vs. size trade-offs (--opt_for_speed, -mf)" superClass="com.ti.ccstudio.buildDefinitions.TMS470_15.12.compilerID.OPT_FOR_SPEED" value="com.ti.ccstudio.buildDefinitions.TMS470_15.12.compilerID.OPT_FOR_SPEED.0" valueType="enumerated"/>
 								<option id="com.ti.ccstudio.buildDefinitions.TMS470_15.12.compilerID.C_DIALECT.1071406901" name="C Dialect" superClass="com.ti.ccstudio.buildDefinitions.TMS470_15.12.compilerID.C_DIALECT" value="com.ti.ccstudio.buildDefinitions.TMS470_15.12.compilerID.C_DIALECT.C99" valueType="enumerated"/>
 								<option id="com.ti.ccstudio.buildDefinitions.TMS470_15.12.compilerID.LANGUAGE_MODE.566036022" name="Language mode" superClass="com.ti.ccstudio.buildDefinitions.TMS470_15.12.compilerID.LANGUAGE_MODE" value="com.ti.ccstudio.buildDefinitions.TMS470_15.12.compilerID.LANGUAGE_MODE.RELAXED_ANSI" valueType="enumerated"/>
@@ -96,7 +96,7 @@
 								<option id="com.ti.ccstudio.buildDefinitions.TMS470_15.12.compilerID.SAT_REASSOC.243332629" name="Allow reassociation of sat arithmetic (--sat_reassoc)" superClass="com.ti.ccstudio.buildDefinitions.TMS470_15.12.compilerID.SAT_REASSOC" value="com.ti.ccstudio.buildDefinitions.TMS470_15.12.compilerID.SAT_REASSOC.off" valueType="enumerated"/>
 								<option id="com.ti.ccstudio.buildDefinitions.TMS470_15.12.compilerID.PLAIN_CHAR.2129601206" name="Specify how to treat plain chars (signed/unsigned) (--plain_char)" superClass="com.ti.ccstudio.buildDefinitions.TMS470_15.12.compilerID.PLAIN_CHAR" value="com.ti.ccstudio.buildDefinitions.TMS470_15.12.compilerID.PLAIN_CHAR.unsigned" valueType="enumerated"/>
 								<option id="com.ti.ccstudio.buildDefinitions.TMS470_15.12.compilerID.DEFINE.1319227796" name="Pre-define NAME (--define, -D)" superClass="com.ti.ccstudio.buildDefinitions.TMS470_15.12.compilerID.DEFINE" valueType="definedSymbols">
-									<listOptionValue builtIn="false" value="HIGH_PERFORMANCE"/>
+									<listOptionValue builtIn="false" value="xHIGH_PERFORMANCE"/>
 									<listOptionValue builtIn="false" value="xPRINTF_ENABLED"/>
 									<listOptionValue builtIn="false" value="xWATCHDOGTIMER_EN"/>
 									<listOptionValue builtIn="false" value="OSAL_SNV=2"/>
@@ -132,7 +132,7 @@
 									<listOptionValue builtIn="false" value="xCC2650DK_7ID"/>
 									<listOptionValue builtIn="false" value="CC2650STK"/>
 									<listOptionValue builtIn="false" value="CC26XX"/>
-									<listOptionValue builtIn="false" value="xDEBUG"/>
+									<listOptionValue builtIn="false" value="DEBUG"/>
 									<listOptionValue builtIn="false" value="xHEAPMGR_METRICS"/>
 								</option>
 								<option id="com.ti.ccstudio.buildDefinitions.TMS470_15.12.compilerID.UNDEFINE.266930658" name="Undefine NAME (--undefine, -U)" superClass="com.ti.ccstudio.buildDefinitions.TMS470_15.12.compilerID.UNDEFINE"/>
