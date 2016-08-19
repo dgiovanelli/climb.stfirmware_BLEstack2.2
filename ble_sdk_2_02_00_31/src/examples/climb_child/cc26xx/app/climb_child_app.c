@@ -167,14 +167,14 @@
 #define GOTOSLEEP_DEFAULT_TIMEOUT_SEC			1*60*60
 #define GOING_TO_SLEEP_DELAY_AFTER_REQUEST_MSEC 1000*60
 
-#define NODE_ID								  { 0x02  }
+#define NODE_ID								  0x00
 
 #define CHILD_NODE_ID_LENGTH				  1
 #define MASTER_NODE_ID_LENGTH				  6
 
 #define MAX_SUPPORTED_CHILD_NODES			  70
 #define MAX_SUPPORTED_MASTER_NODES			  10
-#if MAX_SUPPORTED_CHILD_NODES+MAX_SUPPORTED_MASTER_NODES < 90
+#if MAX_SUPPORTED_CHILD_NODES+MAX_SUPPORTED_MASTER_NODES < 80
 #warning MAX_SUPPORTED_CHILD_NODES is low because of debugging pourposes, it can be set to 90
 #endif
 
@@ -184,21 +184,33 @@
 #define ADV_PKT_ID_OFFSET					  12
 #define ADV_PKT_STATE_OFFSET				  ADV_PKT_ID_OFFSET + CHILD_NODE_ID_LENGTH
 
-#define GATT_PKT_SET_ID_CMD					  0x01
-
 #define BROADCAST_MSG_TYPE_STATE_UPDATE_CMD	  0x01
 #define BROADCAST_MSG_LENGTH_STATE_UPDATE_CMD 0x02
 
 #define BROADCAST_MSG_TYPE_WU_SCHEDULE_CMD	  0x02
 #define BROADCAST_MSG_LENGTH_WU_SCHEDULE_CMD  0x04
 
+#define BROADCAST_MSG_TYPE_MODE_CHANGE_CMD	  0x03
+#define BROADCAST_MSG_LENGTH_MODE_CHANGE_CMD  0x02
+
+#define GATT_PKT_SET_ID_CMD					  0x01
+#define GATT_PKT_SET_BEACON_MODE_CMD		  BROADCAST_MSG_TYPE_MODE_CHANGE_CMD
+
 #define	DEFAULT_MTU_LENGTH						23
 
-#define SNV_BASE_ID							  0x80
-#define TIMERS_SNV_OFFSET					  0x02
+#define SNV_BASE_ID							  BLE_NVID_CUST_START
+#define CONFIGURATION_SNV_OFFSET_ID			  0x00
+#define TIMERS_SNV_OFFSET_ID			      0x01
+
+#define STORED_CONFIGURATION_NODE_ID_OFFSET	  0x00
+#define STORED_CONFIGURATION_MODE_OFFSET	  STORED_CONFIGURATION_NODE_ID_OFFSET + CHILD_NODE_ID_LENGTH
+#define STORED_CONFIGURATION_MODE_LENGTH	  0x01
+
+#define STORED_CONFIGURATION_TOTAL_LENGTH     CHILD_NODE_ID_LENGTH + STORED_CONFIGURATION_MODE_LENGTH
 
 #define MAX_ALLOWED_TIMER_DURATION_SEC	      42000 //actual max timer duration 42949.67sec
 
+#define DEFAULT_BEACON_MODE					  BEACON_ONLY
 // Task configuration
 #define SBT_TASK_PRIORITY                     1
 
@@ -292,6 +304,11 @@ typedef struct {
 	uint8 validData;
 } timerSNVDataStore_t;
 
+typedef enum ClimbBeaconMode_t {
+	BEACON_ONLY = 1,
+	COMBO_MODE = 2,
+} ClimbBeaconMode_t;
+
 // App event passed from profiles.
 typedef struct {
 	uint16_t event;  // event type
@@ -347,7 +364,7 @@ static uint16_t events;
 Task_Struct sbmTask;
 Char sbmTaskStack[SBT_TASK_STACK_SIZE];
 
-#ifdef BEACON_ONLY
+#if DEFAULT_BEACON_MODE == BEACON_ONLY
 static ChildClimbNodeStateType_t nodeState = BEACON;
 #else
 static ChildClimbNodeStateType_t nodeState = BY_MYSELF;
@@ -444,8 +461,10 @@ PIN_State pinGpioState;
 PIN_Handle hGpioPin;
 static uint8 adv_counter = 0;
 
-static uint8 myIDArray[] = {0x00};//NODE_ID;
+static uint8 myIDArray[] = {NODE_ID};
 static uint8 broadcastID[] = { 0xFF };
+
+static ClimbBeaconMode_t beacon_mode = DEFAULT_BEACON_MODE;
 
 static uint32 batteryLev = 0;
 
@@ -642,10 +661,6 @@ static void simpleTopology_init(void) {
 	Util_constructClock(&goToSleepClock, Climb_clockHandler,
 			GOTOSLEEP_DEFAULT_TIMEOUT_SEC * 1000, 0, false, GOTOSLEEP_TIMEOUT_EVT);
 
-	//read ID
-	osal_snv_read(SNV_BASE_ID, CHILD_NODE_ID_LENGTH, myIDArray);
-	memcpy(&defAdvertData[ADV_PKT_ID_OFFSET], myIDArray, CHILD_NODE_ID_LENGTH);
-
 //#warning MAC ADDRESS MODIFIED
 //	uint8 tempAddr[] = {
 //			0x83,
@@ -805,6 +820,34 @@ static void simpleTopology_init(void) {
 	// Start Bond Manager
 	VOID GAPBondMgr_Register(&simpleBLEPeripheral_BondMgrCBs);
 
+	uint8 ret = SUCCESS;
+	uint8 snv_stored_conf[STORED_CONFIGURATION_TOTAL_LENGTH];
+	//read snv_stored_conf from FLASH
+	ret = osal_snv_write(SNV_BASE_ID + CONFIGURATION_SNV_OFFSET_ID, 0, snv_stored_conf);  //this is needed to initialize this ID in SNV
+	if (ret == SUCCESS) {
+		ret = osal_snv_read(SNV_BASE_ID + CONFIGURATION_SNV_OFFSET_ID, STORED_CONFIGURATION_TOTAL_LENGTH, snv_stored_conf);
+		if (ret == SUCCESS) {
+			memcpy(myIDArray, &(snv_stored_conf[STORED_CONFIGURATION_NODE_ID_OFFSET]), CHILD_NODE_ID_LENGTH);
+
+			//if the stored configurations contains a valid
+			switch (snv_stored_conf[STORED_CONFIGURATION_MODE_OFFSET]) {
+			case (uint8) BEACON_ONLY:	//only accept valid data
+			case (uint8) COMBO_MODE:
+				beacon_mode = (ClimbBeaconMode_t)snv_stored_conf[STORED_CONFIGURATION_MODE_OFFSET];
+				//beacon_mode = DEFAULT_BEACON_MODE;
+				break;
+
+			default:
+				beacon_mode = DEFAULT_BEACON_MODE;//BEACON MODE FIELD CONTAINS A NON-VALID VALUE, start with default one, NB: writing it to flash is useless, since, if the mode isn't changed, at the next startup it will get here anyway.
+				break;
+			}
+		}
+	}
+	if( beacon_mode == BEACON_ONLY ){
+		Climb_updateMyBroadcastedState(BEACON);
+	}else if( beacon_mode == COMBO_MODE ){
+		Climb_updateMyBroadcastedState(BY_MYSELF);
+	}
 
 	if ( restoreTimersConf() ) { // the flash contained a valid timers configuration
 		if (Util_isActive(&goToSleepClock)) { //if this timer is active it means that this boot follows a fault, and before the fault the node was active, then start it.
@@ -816,6 +859,8 @@ static void simpleTopology_init(void) {
 //automatically start-up the node
 #warning the node is configured to start as childInitModeActive automatically upon power up
 		Climb_enterChildInitMode();
+		//events |= WAKEUP_TIMEOUT_EVT;
+		//Semaphore_post(sem);
 	}
 
 }
@@ -910,11 +955,11 @@ static void simpleTopology_taskFxn(UArg a0, UArg a1) {
 		if (events & PERIODIC_EVT) {
 			events &= ~PERIODIC_EVT;
 		      if(nodeTurnedOn != 0){
-#ifndef BEACON_ONLY
-		    	  Util_startClock(&periodicClock);
-		    	  // Perform periodic application task
-		          Climb_periodicTask();
-#endif
+		    	  if(beacon_mode == COMBO_MODE){
+					Util_startClock(&periodicClock);
+					// Perform periodic application task
+					Climb_periodicTask();
+		    	  }
 		      }
 		}
 
@@ -933,8 +978,9 @@ static void simpleTopology_taskFxn(UArg a0, UArg a1) {
 
 	    if (events & CONNECTABLE_TIMEOUT_EVT){
 	    	events &= ~CONNECTABLE_TIMEOUT_EVT;
-
-	    	Climb_exitChildInitMode();
+	    	if(childInitModeActive){
+	    		Climb_exitChildInitMode();
+	    	}
 	    }
 
 #ifdef WATCHDOGTIMER_EN
@@ -1123,22 +1169,55 @@ static void Climb_processCharValueChangeEvt(uint8_t paramID) {
 	uint8_t newValue[CLIMBPROFILE_CHAR2_LEN];
 
 	switch (paramID) {
-	case CLIMBPROFILE_CHAR1: {
+	case CLIMBPROFILE_CHAR1:
 		ClimbProfile_GetParameter(CLIMBPROFILE_CHAR1, newValue);
 		break;
-	}
-	case CLIMBPROFILE_CHAR2: {
+
+	case CLIMBPROFILE_CHAR2:
 		ClimbProfile_GetParameter(CLIMBPROFILE_CHAR2, newValue);
 
 		if (newValue[0] == GATT_PKT_SET_ID_CMD) {
-			memcpy(myIDArray, &newValue[1], CHILD_NODE_ID_LENGTH);
-			osal_snv_write(SNV_BASE_ID, CHILD_NODE_ID_LENGTH, &myIDArray);
-		}
+			uint8 snv_to_store_conf[STORED_CONFIGURATION_TOTAL_LENGTH];
 
+			memcpy(myIDArray, &newValue[1], CHILD_NODE_ID_LENGTH);
+			memcpy(&(snv_to_store_conf[STORED_CONFIGURATION_NODE_ID_OFFSET]), &newValue[1], CHILD_NODE_ID_LENGTH);
+			snv_to_store_conf[STORED_CONFIGURATION_MODE_OFFSET] = (uint8)beacon_mode;
+			osal_snv_write(SNV_BASE_ID+CONFIGURATION_SNV_OFFSET_ID, STORED_CONFIGURATION_TOTAL_LENGTH, snv_to_store_conf);
+		} else if (newValue[0] == GATT_PKT_SET_BEACON_MODE_CMD) {
+			uint8 snv_to_store_conf[STORED_CONFIGURATION_TOTAL_LENGTH];
+			uint8 snv_stored_conf[STORED_CONFIGURATION_TOTAL_LENGTH];
+
+			switch (newValue[1]) {
+			case (uint8)BEACON_ONLY:	//only accept valid data
+			case (uint8)COMBO_MODE:
+				//save the new configuration in ram
+				beacon_mode = (ClimbBeaconMode_t)newValue[1];
+				snv_to_store_conf[STORED_CONFIGURATION_MODE_OFFSET] = (ClimbBeaconMode_t)newValue[1];
+				memcpy(&(snv_to_store_conf[STORED_CONFIGURATION_NODE_ID_OFFSET]), myIDArray, CHILD_NODE_ID_LENGTH);
+				//retrieve the stored configuration
+
+				osal_snv_read(SNV_BASE_ID+CONFIGURATION_SNV_OFFSET_ID, STORED_CONFIGURATION_TOTAL_LENGTH, snv_stored_conf);
+				if(snv_stored_conf[STORED_CONFIGURATION_MODE_OFFSET] != beacon_mode){ //if the stored and the new configurations don't match store the new version in flash
+					osal_snv_write(SNV_BASE_ID+CONFIGURATION_SNV_OFFSET_ID, STORED_CONFIGURATION_TOTAL_LENGTH, snv_to_store_conf);
+				}
+
+				if( beacon_mode == BEACON_ONLY ){
+					Climb_updateMyBroadcastedState(BEACON);
+				}else if( beacon_mode == COMBO_MODE ){
+					Climb_updateMyBroadcastedState(BY_MYSELF);
+				}
+				break;
+
+			default:
+				//BEACON MODE FIELD CONTAINS A NON-VALID VALUE
+				break;
+			}
+
+		}
 		break;
-	}
+
 	default:
-		// should not reach here!
+		// COMMAND FIELD CONTAINS A NON VALID VALUE
 		break;
 	}
 }
@@ -1172,7 +1251,7 @@ static void simpleTopology_processRoleEvent(gapMultiRoleEvent_t *pEvent) {
 
 	case GAP_MAKE_DISCOVERABLE_DONE_EVENT: {
 
-		//HCI_EXT_AdvEventNoticeCmd(selfEntity, ADVERTISE_EVT);
+		HCI_EXT_AdvEventNoticeCmd(selfEntity, ADVERTISE_EVT);
 	}
 		break;
 
@@ -1229,6 +1308,11 @@ static void simpleTopology_processRoleEvent(gapMultiRoleEvent_t *pEvent) {
 	case GAP_DEVICE_DISCOVERY_EVENT: {
 		scanning = FALSE;
 		devicesHeardDuringLastScan = 0;
+
+		if( beacon_mode == BEACON_ONLY ){
+			destroyChildNodeList();
+			destroyMasterNodeList();
+		}
 	}
 		break;
 
@@ -1243,7 +1327,9 @@ static void simpleTopology_processRoleEvent(gapMultiRoleEvent_t *pEvent) {
 			uint8 adv_active = FALSE;
 			GAPRole_SetParameter(GAPROLE_ADVERT_ENABLED, sizeof(uint8_t),&adv_active, NULL);
 
-			childInitModeActive = FALSE;
+			if(childInitModeActive){
+				Climb_exitChildInitMode();
+			}
             // Enable non-childInitModeActive advertising.
 			if(nodeTurnedOn){
 				adv_active = FALSE;
@@ -1270,7 +1356,15 @@ static void simpleTopology_processRoleEvent(gapMultiRoleEvent_t *pEvent) {
 		HCI_EXT_ConnEventNoticeCmd(pEvent->linkTerminate.connectionHandle, selfEntity, 0);
 
 		simpleTopology_freeAttRsp(bleNotConnected);
-		Climb_exitChildInitMode();
+		if(childInitModeActive){
+			Climb_exitChildInitMode();
+		}
+
+		// Enable non-childInitModeActive advertising if the node was turned on (otherwise only the childInitMode was active).
+		if (nodeTurnedOn) {
+			uint8 adv_active = TRUE;
+			GAPRole_SetParameter(GAPROLE_ADV_NONCONN_ENABLED, sizeof(uint8_t), &adv_active, NULL);
+		}
 
 	}
 		break;
@@ -1391,23 +1485,25 @@ static void climb_pairStateCB(uint16_t connHandle, uint8_t state,
  */
 static void BLE_AdvertiseEventHandler(void) {
 
-#ifdef BEACON_ONLY
-	adv_counter++;
-	if ((adv_counter - 1) % 60 == 0) {
-		batteryLev = AONBatMonBatteryVoltageGet();
-		batteryLev = (batteryLev * 125) >> 5;
-	}
 
-	Climb_updateMyBroadcastedState(BEACON);
+	if (beacon_mode == BEACON_ONLY) {
+		adv_counter++;
+		if ((adv_counter - 1) % 60 == 0) {
+			batteryLev = AONBatMonBatteryVoltageGet();
+			batteryLev = (batteryLev * 125) >> 5;
+		}
 
-	if( childInitModeActive ){ // when it's childInitModeActive enable the preAdvEvt so that the discovery is kept active, otherwise after 2 seconds it will be turned off
+		Climb_updateMyBroadcastedState(BEACON);
+
+		if (childInitModeActive) { // when it's childInitModeActive enable the preAdvEvt so that the discovery is kept active, otherwise after 2 seconds it will be turned off
+			//temp_tick_3 = Clock_getTicks();
+			Util_startClock(&preAdvClock);
+		}
+	} else {
 		//temp_tick_3 = Clock_getTicks();
 		Util_startClock(&preAdvClock);
 	}
-#else
-	//temp_tick_3 = Clock_getTicks();
-	Util_startClock(&preAdvClock);
-#endif
+
 
 #if LED_VERBOSITY > 1
 	if( childInitModeActive ){
@@ -1633,50 +1729,66 @@ static uint8 Climb_findNodeById(uint8 *nodeID, ClimbNodeType_t nodeType) {
  */
 static uint8 Climb_addNode(gapDeviceInfoEvent_t *gapDeviceInfoEvent, ClimbNodeType_t nodeType) {
 
-	uint8 freePos = 0;
+	if (gapDeviceInfoEvent->eventType == GAP_ADRPT_ADV_SCAN_IND | gapDeviceInfoEvent->eventType == GAP_ADRPT_ADV_IND | gapDeviceInfoEvent->eventType == GAP_ADRPT_ADV_NONCONN_IND) {	//adv data
+		uint8 freePos = 0;
+		if (nodeType == CLIMB_CHILD_NODE) {
 
-	if (nodeType == CLIMB_CHILD_NODE) {
+			if (gapDeviceInfoEvent->eventType == GAP_ADRPT_ADV_NONCONN_IND) { //child nodes uses only non-connectable advertising, when they are connectable they are in init-mode, and they should not be monitored
 
-		while( isNonZero(childListArray[freePos].id, CHILD_NODE_ID_LENGTH) ){
-			freePos++;
+				while (isNonZero(childListArray[freePos].id, CHILD_NODE_ID_LENGTH)) {
 
-			if(freePos >= MAX_SUPPORTED_CHILD_NODES){
+					freePos++;
+
+					if (freePos >= MAX_SUPPORTED_CHILD_NODES) {
+						return 255;
+					}
+
+					if (gapDeviceInfoEvent->pEvtData[ADV_PKT_STATE_OFFSET] > 5) {
+						return 255;
+					}
+
+				}
+
+				childListArray[freePos].rssi = gapDeviceInfoEvent->rssi;
+				childListArray[freePos].lastContactTicks = Clock_getTicks();
+
+				memcpy(childListArray[freePos].id, &gapDeviceInfoEvent->pEvtData[ADV_PKT_ID_OFFSET], CHILD_NODE_ID_LENGTH);
+				childListArray[freePos].state = (ChildClimbNodeStateType_t) gapDeviceInfoEvent->pEvtData[ADV_PKT_STATE_OFFSET];
+				childListArray[freePos].stateToImpose = childListArray[freePos].state;
+				childListArray[freePos].contactSentThoughGATT = FALSE;
+
+				return 1;
+
+			} else {
+
 				return 255;
 			}
+		} else if (nodeType == CLIMB_MASTER_NODE) {
 
-		}
+			while (isNonZero(masterListArray[freePos].id, MASTER_NODE_ID_LENGTH)) {
+				freePos++;
 
+				if (freePos >= MAX_SUPPORTED_MASTER_NODES) {
+					return 255;
+				}
 
-		childListArray[freePos].rssi = gapDeviceInfoEvent->rssi;
-		childListArray[freePos].lastContactTicks = Clock_getTicks();
-
-		memcpy(childListArray[freePos].id, &gapDeviceInfoEvent->pEvtData[ADV_PKT_ID_OFFSET], CHILD_NODE_ID_LENGTH);
-		childListArray[freePos].state = (ChildClimbNodeStateType_t) gapDeviceInfoEvent->pEvtData[ADV_PKT_STATE_OFFSET];
-
-		return 1;
-	} else if (nodeType == CLIMB_MASTER_NODE) {
-
-		while (isNonZero(masterListArray[freePos].id, MASTER_NODE_ID_LENGTH)) {
-			freePos++;
-
-			if (freePos >= MAX_SUPPORTED_MASTER_NODES) {
-				return 255;
 			}
 
+			masterListArray[freePos].rssi = gapDeviceInfoEvent->rssi;
+			masterListArray[freePos].lastContactTicks = Clock_getTicks();
+
+			memcpy(masterListArray[freePos].id, &gapDeviceInfoEvent->addr, MASTER_NODE_ID_LENGTH);
+			masterListArray[freePos].state = INVALID_STATE;
+			masterListArray[freePos].stateToImpose = masterListArray[freePos].state;
+			masterListArray[freePos].contactSentThoughGATT = FALSE;
+
+			return 1;
 		}
-
-		masterListArray[freePos].rssi = gapDeviceInfoEvent->rssi;
-		masterListArray[freePos].lastContactTicks = Clock_getTicks();
-
-		memcpy(masterListArray[freePos].id, &gapDeviceInfoEvent->addr, MASTER_NODE_ID_LENGTH);
-		masterListArray[freePos].state = INVALID_STATE;
-
-		return 1;
+		return 0;
+	}else{ // this event is a scan response, climb system uses only adv data
+		return 255;
 	}
-	return 0;
-
 }
-
 
 /*********************************************************************
  * @fn      Climb_updateNodeMetadata
@@ -1737,7 +1849,7 @@ static uint8 Climb_checkNodeState(gapDeviceInfoEvent_t *gapDeviceInfoEvent_a) {
 		} else {	//sto analizzando l'adv di un altro master,
 			return 0;
 		}
-	} else { //se sono in by myself o beacon cerca in tutti i master visibili (il primo master che mi farà fare il checking diventerà il MIO master)
+	}else{ //se sono in by myself cerca in tutti i master visibili (il primo master che mi farà fare il checking diventerà il MIO master)
 		broadcastedState = Climb_findMyBroadcastedState(gapDeviceInfoEvent_a);
 	}
 
@@ -1746,9 +1858,6 @@ static uint8 Climb_checkNodeState(gapDeviceInfoEvent_t *gapDeviceInfoEvent_a) {
 	uint8 i;
 	switch (broadcastedState) {
 	case BY_MYSELF: //CHECK OUT
-		if (nodeState == BEACON) {
-			return 0;
-		}
 		for (i = 0; i < MASTER_NODE_ID_LENGTH; i++) { //resetta l'indirizzo del nodo master
 			myMasterId[i] = 0;
 		}
@@ -1796,7 +1905,7 @@ static uint8 Climb_checkNodeState(gapDeviceInfoEvent_t *gapDeviceInfoEvent_a) {
 		break;
 
 	case INVALID_STATE:				//check to see if there is a broadcast message in this packet
-		if (nodeState == BY_MYSELF) { //broadcast message can be received only if I have a myMaster Node or if I'm in BEACON mode
+		if (nodeState == BY_MYSELF && childInitModeActive == FALSE) { //broadcast message can be received only if I have a myMaster Node or if I'm in BEACON mode
 			//broadcastedState = nodeState;
 			return 0;
 		} else {
@@ -1849,7 +1958,11 @@ static ChildClimbNodeStateType_t Climb_findMyBroadcastedState(gapDeviceInfoEvent
 					} else if(memcomp(broadcastID, &gapDeviceInfoEvent_a->pEvtData[index], CHILD_NODE_ID_LENGTH) == 0) { // BROADCAST MESSAGE FOUND
 
 						if(gapDeviceInfoEvent_a->pEvtData[index + 1] == BROADCAST_MSG_TYPE_STATE_UPDATE_CMD){
-							return (ChildClimbNodeStateType_t) (gapDeviceInfoEvent_a->pEvtData[index + 2]); //return broadcasted state
+							if (!childInitModeActive){
+								return (ChildClimbNodeStateType_t) (gapDeviceInfoEvent_a->pEvtData[index + 2]); //return broadcasted state
+							}else{
+								return INVALID_STATE; //a BROADCAST_MSG_TYPE_STATE_UPDATE_CMD has been found, but the device is now in child init mode, then no state change is allowed
+							}
 						}else{
 							return INVALID_STATE; //a broadcast message has been found but it is not BROADCAST_MSG_TYPE_STATE_UPDATE_CMD, then return since no other message is contained in this adv packet
 						}
@@ -1885,48 +1998,93 @@ static ChildClimbNodeStateType_t Climb_findMyBroadcastedState(gapDeviceInfoEvent
 static uint8 Climb_decodeBroadcastedMessage(gapDeviceInfoEvent_t *gapDeviceInfoEvent_a) {
 	uint8 index = 0;
 
-	if (gapDeviceInfoEvent_a->eventType == GAP_ADRPT_ADV_SCAN_IND | gapDeviceInfoEvent_a->eventType == GAP_ADRPT_ADV_IND
-			| gapDeviceInfoEvent_a->eventType == GAP_ADRPT_ADV_NONCONN_IND) { //lo stato è contenuto solo dentro i pacchetti di advertise, è inutile cercarli dentro le scan response
+	if (gapDeviceInfoEvent_a->eventType == GAP_ADRPT_ADV_SCAN_IND | gapDeviceInfoEvent_a->eventType == GAP_ADRPT_ADV_IND | gapDeviceInfoEvent_a->eventType == GAP_ADRPT_ADV_NONCONN_IND) { //lo stato è contenuto solo dentro i pacchetti di advertise, è inutile cercarli dentro le scan response
 
 		while (index < gapDeviceInfoEvent_a->dataLen) {
 			if (gapDeviceInfoEvent_a->pEvtData[index + 1] == GAP_ADTYPE_MANUFACTURER_SPECIFIC) { //ho trovato il campo GAP_ADTYPE_MANUFACTURER_SPECIFIC
 
-				uint8 manufacter_specific_field_end = index + gapDeviceInfoEvent_a->pEvtData[index];
-				index = index + 4; //salto i campi length, adtype_flag e manufacter ID
-				while (index < manufacter_specific_field_end && index < 29) {
-
-					if (memcomp(broadcastID, &gapDeviceInfoEvent_a->pEvtData[index], CHILD_NODE_ID_LENGTH) == 0) { // BROADCAST MESSAGE FOUND
+				uint8 manufacter_specific_field_end = index + gapDeviceInfoEvent_a->pEvtData[index] - 1; //-1 is beacause the last byte is the counter
+				index += 4; //salto i campi length, adtype_flag e manufacter ID
+				if (memcomp(broadcastID, &gapDeviceInfoEvent_a->pEvtData[index], CHILD_NODE_ID_LENGTH) == 0) { // BROADCAST MESSAGE FOUND, note that the broadcast message must have the broadcast ID in the first position, otherwise it will be discarded
+					uint8 ret = FALSE;
+					while (index < manufacter_specific_field_end && index < 29) {
 
 						uint8 broadcastMsgType = gapDeviceInfoEvent_a->pEvtData[index + 1];
 						uint32 wakeUpTimeout_sec_local;
 						//float randDelay_msec;
 
-						switch(broadcastMsgType) {
+						switch (broadcastMsgType) {
 						case BROADCAST_MSG_TYPE_STATE_UPDATE_CMD:
 							//THIS MESSAGE IS DECODED IN Climb_findMyBroadcastedState(...);
+							if (!childInitModeActive) { //BROADCAST_MSG_TYPE_STATE_UPDATE_CMD is valid only if childInitModeActive is not active
+								ret = TRUE;
+							} else {
+								//ret = ret //keep the previous value
+							}
+							index = index + BROADCAST_MSG_LENGTH_STATE_UPDATE_CMD;
+
 							break;
 
 						case BROADCAST_MSG_TYPE_WU_SCHEDULE_CMD:
-							wakeUpTimeout_sec_local = ((gapDeviceInfoEvent_a->pEvtData[index + 2])<<16) + ((gapDeviceInfoEvent_a->pEvtData[index + 3])<<8) + (gapDeviceInfoEvent_a->pEvtData[index + 4]);
-							Climb_setWakeUpClock( wakeUpTimeout_sec_local );
-							Climb_exitChildInitMode();
+							wakeUpTimeout_sec_local = ((gapDeviceInfoEvent_a->pEvtData[index + 2]) << 16) + ((gapDeviceInfoEvent_a->pEvtData[index + 3]) << 8)
+									+ (gapDeviceInfoEvent_a->pEvtData[index + 4]);
+							Climb_setWakeUpClock(wakeUpTimeout_sec_local);
+
+							ret = TRUE;
+							index = index + BROADCAST_MSG_LENGTH_WU_SCHEDULE_CMD;
 							break;
 
-						default: //should not reach here
+						case BROADCAST_MSG_TYPE_MODE_CHANGE_CMD:
+							if (childInitModeActive) { // BROADCAST_MSG_TYPE_MODE_CHANGE_CMD is valid only during the child init mode
+								uint8 snv_to_store_conf[STORED_CONFIGURATION_TOTAL_LENGTH];
+								uint8 snv_stored_conf[STORED_CONFIGURATION_TOTAL_LENGTH];
+
+								switch (gapDeviceInfoEvent_a->pEvtData[index + 2]) {
+								case (uint8)BEACON_ONLY:	//only accept valid data
+								case (uint8)COMBO_MODE:
+									//save the new configuration in ram
+									beacon_mode = (ClimbBeaconMode_t)gapDeviceInfoEvent_a->pEvtData[index + 2];
+									snv_to_store_conf[STORED_CONFIGURATION_MODE_OFFSET] = (ClimbBeaconMode_t)gapDeviceInfoEvent_a->pEvtData[index + 2];
+									memcpy(&(snv_to_store_conf[STORED_CONFIGURATION_NODE_ID_OFFSET]), myIDArray, CHILD_NODE_ID_LENGTH);
+									//retrieve the stored configuration
+
+									osal_snv_read(SNV_BASE_ID+CONFIGURATION_SNV_OFFSET_ID, STORED_CONFIGURATION_TOTAL_LENGTH, snv_stored_conf);
+									if(snv_stored_conf[STORED_CONFIGURATION_MODE_OFFSET] != (uint8)beacon_mode){ //if the stored and the new configurations don't match store the new version in flash
+										osal_snv_write(SNV_BASE_ID+CONFIGURATION_SNV_OFFSET_ID, STORED_CONFIGURATION_TOTAL_LENGTH, snv_to_store_conf);
+									}
+
+									if( beacon_mode == BEACON_ONLY ){
+										Climb_updateMyBroadcastedState(BEACON);
+									}else if( beacon_mode == COMBO_MODE ){
+										Climb_updateMyBroadcastedState(BY_MYSELF);
+									}
+									ret = TRUE;
+									break;
+
+								default:
+									//BEACON MODE FIELD CONTAINS A NON-VALID VALUE
+									break;
+								}
+							}
+							index = index + BROADCAST_MSG_LENGTH_MODE_CHANGE_CMD;
+							break;
+
+						default:
+							//should not reach here, but if it is the case, exit
+							return FALSE;
 							break;
 						}
-						return TRUE;
-
-					} else {
-						return FALSE; //the broadcast message cannot be placed at random position
-						//index = index + NODE_ID_LENGTH + 1;
 					}
-
+					if (childInitModeActive && ret) { //if at least one broadcast packet is received
+						Climb_exitChildInitMode();
+					}
+					return ret;
+				} else {
+					return FALSE;
+					//index = index + NODE_ID_LENGTH + 1;
 				}
-
-				return FALSE; //questo blocca la ricerca una volta trovato il flag GAP_ADTYPE_MANUFACTURER_SPECIFIC, quindi se ce ne fossero due il sistema vede solo il primo
 			} else { // ricerca il nome nella parte successiva del pacchetto
-				index = index + gapDeviceInfoEvent_a->pEvtData[index] + 1;
+				index += gapDeviceInfoEvent_a->pEvtData[index] + 1;
 			}
 
 		}
@@ -1948,63 +2106,65 @@ static uint8 Climb_decodeBroadcastedMessage(gapDeviceInfoEvent_t *gapDeviceInfoE
 
 static void Climb_updateMyBroadcastedState(ChildClimbNodeStateType_t newState) {
 
+	if(childInitModeActive){
+		GAP_UpdateAdvertisingData(selfEntity, true, sizeof(connAdvertData), connAdvertData);
+	}else{
+
 	uint8 newAdvertData[31];
 
-	nodeState = newState;
+		nodeState = newState;
 
-	newAdvertData[0] = 0x07; // length of this data
-	newAdvertData[1] = GAP_ADTYPE_LOCAL_NAME_COMPLETE;
-	newAdvertData[2] = defAdvertData[2];
-	newAdvertData[3] = defAdvertData[3];
-	newAdvertData[4] = defAdvertData[4];
-	newAdvertData[5] = defAdvertData[5];
-	newAdvertData[6] = defAdvertData[6];
-	newAdvertData[7] = defAdvertData[7];
-	//newAdvertData[8] = i-9; assigned later
-	newAdvertData[9] = GAP_ADTYPE_MANUFACTURER_SPECIFIC;
-	newAdvertData[10] = 0x0D;
-	newAdvertData[11] = 0x00;
-	memcpy(&newAdvertData[ADV_PKT_ID_OFFSET], myIDArray, CHILD_NODE_ID_LENGTH);
-	newAdvertData[ADV_PKT_STATE_OFFSET] = (uint8)nodeState;
+		newAdvertData[0] = 0x07; // length of this data
+		newAdvertData[1] = GAP_ADTYPE_LOCAL_NAME_COMPLETE;
+		newAdvertData[2] = defAdvertData[2];
+		newAdvertData[3] = defAdvertData[3];
+		newAdvertData[4] = defAdvertData[4];
+		newAdvertData[5] = defAdvertData[5];
+		newAdvertData[6] = defAdvertData[6];
+		newAdvertData[7] = defAdvertData[7];
+		//newAdvertData[8] = i-9; assigned later
+		newAdvertData[9] = GAP_ADTYPE_MANUFACTURER_SPECIFIC;
+		newAdvertData[10] = 0x0D;
+		newAdvertData[11] = 0x00;
+		memcpy(&newAdvertData[ADV_PKT_ID_OFFSET], myIDArray, CHILD_NODE_ID_LENGTH);
+		newAdvertData[ADV_PKT_STATE_OFFSET] = (uint8) nodeState;
 
+		uint8 i = ADV_PKT_STATE_OFFSET + 1;
+		uint8 nodeArrayIndex = adv_startNodeIndex;
+		uint8 roundCompleted = FALSE;
 
+		while (i < 27 && roundCompleted == FALSE) {
 
-	uint8 i = ADV_PKT_STATE_OFFSET + 1;
-	uint8 nodeArrayIndex = adv_startNodeIndex;
-	uint8 roundCompleted = FALSE;
+			if (isNonZero(childListArray[nodeArrayIndex].id, CHILD_NODE_ID_LENGTH)) { //discard empty spaces
 
-	while (i < 27 && roundCompleted == FALSE) {
+				memcpy(&newAdvertData[i], childListArray[nodeArrayIndex].id, CHILD_NODE_ID_LENGTH);
+				i += CHILD_NODE_ID_LENGTH;
+				newAdvertData[i++] = childListArray[nodeArrayIndex].rssi;
 
-		if (isNonZero(childListArray[nodeArrayIndex].id, CHILD_NODE_ID_LENGTH)) { //discard empty spaces
+			}
 
-			memcpy(&newAdvertData[i], childListArray[nodeArrayIndex].id, CHILD_NODE_ID_LENGTH);
-			i += CHILD_NODE_ID_LENGTH;
-			newAdvertData[i++] = childListArray[nodeArrayIndex].rssi;
+			nodeArrayIndex++;
+
+			if (nodeArrayIndex >= MAX_SUPPORTED_CHILD_NODES) {
+				nodeArrayIndex = 0;
+			}
+
+			if (nodeArrayIndex == adv_startNodeIndex) {
+				roundCompleted = TRUE;
+			}
 
 		}
+		adv_startNodeIndex = nodeArrayIndex;
 
-		nodeArrayIndex++;
+		newAdvertData[i++] = (uint8) (batteryLev >> 8);
+		newAdvertData[i++] = (uint8) (batteryLev);
+		newAdvertData[i++] = adv_counter; //the counter is always in the last position
+		newAdvertData[8] = i - 9;
 
-		if(nodeArrayIndex >= MAX_SUPPORTED_CHILD_NODES){
-			nodeArrayIndex = 0;
-		}
-
-		if(nodeArrayIndex == adv_startNodeIndex){
-			roundCompleted = TRUE;
-		}
+		//temp_tick_1 = Clock_getTicks();
+		GAP_UpdateAdvertisingData(selfEntity, true, i, &newAdvertData[0]);
 
 	}
-	adv_startNodeIndex = nodeArrayIndex;
-
-	newAdvertData[i++] = (uint8) (batteryLev >> 8);
-	newAdvertData[i++] = (uint8) (batteryLev);
-	newAdvertData[i++] = adv_counter; //the counter is always in the last position
-	newAdvertData[8] = i-9;
-
-	//temp_tick_1 = Clock_getTicks();
-	GAP_UpdateAdvertisingData(selfEntity, true, i,	&newAdvertData[0]);
-
-
 	//GAP_UpdateAdvertisingData(selfEntity, false, 13,	&advertData[0]);
 
 	return;
@@ -2166,6 +2326,7 @@ static void Climb_enterChildInitMode(void){
 
 	//HCI_EXT_AdvEventNoticeCmd(selfEntity, 0);
 	//Util_stopClock(&preAdvClock);
+	childInitModeActive = TRUE;
 
 	uint8 adv_active;
 	if(nodeTurnedOn){
@@ -2188,7 +2349,6 @@ static void Climb_enterChildInitMode(void){
 	GAPRole_SetParameter(GAPROLE_ADVERT_ENABLED, sizeof(uint8_t), &adv_active, NULL);
 	HCI_EXT_AdvEventNoticeCmd(selfEntity, ADVERTISE_EVT);
 
-	childInitModeActive = TRUE;
 }
 
 /*********************************************************************
@@ -2201,12 +2361,12 @@ static void Climb_enterChildInitMode(void){
  */
 static void Climb_exitChildInitMode(){
 
+	childInitModeActive = FALSE;
+
 	GAPRole_CancelDiscovery();
 
 	uint8 adv_active = 0;
 	uint8 status = GAPRole_SetParameter(GAPROLE_ADVERT_ENABLED, sizeof(uint8_t), &adv_active, NULL);
-
-	childInitModeActive = FALSE;
 
     if (Util_isActive(&connectableTimeoutClock)){
     	Util_stopClock(&connectableTimeoutClock);
@@ -2219,11 +2379,10 @@ static void Climb_exitChildInitMode(){
 		status = GAPRole_SetParameter(GAPROLE_ADV_NONCONN_ENABLED, sizeof(uint8_t), &adv_active, NULL);
 		HCI_EXT_AdvEventNoticeCmd(selfEntity, ADVERTISE_EVT);
 	}
-
-#ifdef BEACON_ONLY //delete all devices seen during the conectable period
-	destroyChildNodeList();
-	destroyMasterNodeList();
-#endif
+	if (beacon_mode == BEACON_ONLY) {
+		destroyChildNodeList();
+		destroyMasterNodeList();
+	}
 
 }
 
@@ -2266,7 +2425,7 @@ static void Climb_periodicTask(void){
 }
 
 static void Climb_preAdvEvtHandler(){
-#ifndef BEACON_ONLY
+	if(beacon_mode == COMBO_MODE){
 #ifdef HIGH_PERFORMANCE
 	GAPRole_CancelDiscovery();
 	scanning = FALSE;
@@ -2279,19 +2438,21 @@ static void Climb_preAdvEvtHandler(){
 	}
 
 	Climb_updateMyBroadcastedState(nodeState); //update adv data every adv event to update adv_counter value. Since the argument is nodeState this function call doesn't modify the actual state of this node
-#endif
-
-	if(!scanning){
-#ifndef BEACON_ONLY
-		if(nodeTurnedOn){
-#else
-		if(childInitModeActive){
-#endif
-			GAPRole_StartDiscovery(DEFAULT_DISCOVERY_MODE, DEFAULT_DISCOVERY_ACTIVE_SCAN, DEFAULT_DISCOVERY_WHITE_LIST);
-			scanning = TRUE;
-		}
 	}
 
+	if (!scanning) {
+		if (beacon_mode == BEACON_ONLY) {
+			if (childInitModeActive) {
+				GAPRole_StartDiscovery(DEFAULT_DISCOVERY_MODE, DEFAULT_DISCOVERY_ACTIVE_SCAN, DEFAULT_DISCOVERY_WHITE_LIST);
+				scanning = TRUE;
+			}
+		} else {
+			if (nodeTurnedOn || childInitModeActive) {
+				GAPRole_StartDiscovery(DEFAULT_DISCOVERY_MODE, DEFAULT_DISCOVERY_ACTIVE_SCAN, DEFAULT_DISCOVERY_WHITE_LIST);
+				scanning = TRUE;
+			}
+		}
+	}
 }
 /*********************************************************************
  * @fn      Climb_goToSleepHandler
@@ -2311,14 +2472,11 @@ static void Climb_goToSleepHandler(){
 	for (i = 0; i < MASTER_NODE_ID_LENGTH; i++) { //resetta l'indirizzo del MY_MASTER
 		myMasterId[i] = 0;
 	}
-#ifdef BEACON_ONLY
-	Climb_updateMyBroadcastedState(BEACON);
-#else
-	Climb_updateMyBroadcastedState(BY_MYSELF);
-#endif
-
-
-
+	if(beacon_mode == BEACON_ONLY){
+		Climb_updateMyBroadcastedState(BEACON);
+	}else{
+		Climb_updateMyBroadcastedState(BY_MYSELF);
+	}
 
 }
 
@@ -2451,26 +2609,26 @@ static void CLIMB_handleKeys(uint8 keys) {
 
 			destroyChildNodeList();
 
-			if(nodeState != ON_BOARD){
+			if (nodeState != ON_BOARD) {
 				destroyMasterNodeList();
 
 				uint8 i;
 				for (i = 0; i < MASTER_NODE_ID_LENGTH; i++) { //resetta l'indirizzo del MY_MASTER
 					myMasterId[i] = 0;
 				}
-#ifdef BEACON_ONLY
-				Climb_updateMyBroadcastedState(BEACON);
-#else
-				Climb_updateMyBroadcastedState(BY_MYSELF);
-#endif
-			}else{
-#ifdef BEACON_ONLY
-				Climb_updateMyBroadcastedState(BEACON);
+
+				if (beacon_mode == BEACON_ONLY) {
+					Climb_updateMyBroadcastedState(BEACON);
+				} else {
+					Climb_updateMyBroadcastedState(BY_MYSELF);
+				}
+			} else {
+				if (beacon_mode == BEACON_ONLY) {
+					Climb_updateMyBroadcastedState(BEACON);
+				} else {
+					Climb_updateMyBroadcastedState(nodeState);
+				}
 			}
-#else
-				Climb_updateMyBroadcastedState(nodeState);
-			}
-#endif
 			Util_stopClock(&wakeUpClock);
 			Util_stopClock(&goToSleepClock);
 		}
@@ -2480,7 +2638,11 @@ static void CLIMB_handleKeys(uint8 keys) {
 #if LED_VERBOSITY > 0
 		CLIMB_FlashLed(Board_LED1);
 #endif
-		Climb_enterChildInitMode();
+		if(!childInitModeActive){
+			Climb_enterChildInitMode();
+		}else{
+			Climb_exitChildInitMode();
+		}
 		break;
 
 	default:
@@ -2499,20 +2661,17 @@ static void startNode() {
 
 	if (nodeTurnedOn != 1) {
 
-		scanning = TRUE;
 		nodeTurnedOn = 1;
 
 		uint8 adv_active = 1;
 		uint8 status = GAPRole_SetParameter(GAPROLE_ADV_NONCONN_ENABLED, sizeof(uint8_t), &adv_active, NULL);
 		HCI_EXT_AdvEventNoticeCmd(selfEntity, ADVERTISE_EVT);
 
-#ifndef BEACON_ONLY
-		Util_startClock(&periodicClock);
-		status |= GAPRole_StartDiscovery(DEFAULT_DISCOVERY_MODE, DEFAULT_DISCOVERY_ACTIVE_SCAN, DEFAULT_DISCOVERY_WHITE_LIST);
-#endif
-//		if (status != 0){
-//			while(1);
-//		}
+		if(beacon_mode == COMBO_MODE){
+			Util_startClock(&periodicClock);
+			status |= GAPRole_StartDiscovery(DEFAULT_DISCOVERY_MODE, DEFAULT_DISCOVERY_ACTIVE_SCAN, DEFAULT_DISCOVERY_WHITE_LIST);
+			scanning = TRUE;
+		}
 	}
 }
 
@@ -2615,46 +2774,49 @@ static void saveTimersConf(void){
 	timerConfToStore.wakeUpTimeout_sec_global_value = wakeUpTimeout_sec_global;
 	timerConfToStore.validData = TRUE;
 
-	//todo: verifica che la scrittura sia stata fatta realmente e non sia bufferizata
-	osal_snv_write(SNV_BASE_ID+TIMERS_SNV_OFFSET, sizeof(timerSNVDataStore_t), &timerConfToStore);
+	osal_snv_write(SNV_BASE_ID+TIMERS_SNV_OFFSET_ID, sizeof(timerSNVDataStore_t), &timerConfToStore);
 }
 
-static uint8 restoreTimersConf(){
+static uint8 restoreTimersConf() {
 
 	timerSNVDataStore_t timerConfToRestore;
 
-	uint8 ret = osal_snv_read(SNV_BASE_ID + TIMERS_SNV_OFFSET, sizeof(timerSNVDataStore_t), &timerConfToRestore);
+	uint8 ret = osal_snv_write(SNV_BASE_ID + TIMERS_SNV_OFFSET_ID, 0,  &timerConfToRestore);			//this is needed to initialize SNV
 
 	if (ret == SUCCESS) {
+		ret = osal_snv_read(SNV_BASE_ID + TIMERS_SNV_OFFSET_ID, sizeof(timerSNVDataStore_t), &timerConfToRestore);
 
-		if (timerConfToRestore.validData) {
-			Util_stopClock(&wakeUpClock);
-			Util_stopClock(&goToSleepClock);
+		if (ret == SUCCESS) {
 
-			//Reload wakeUp timer value
-			wakeUpTimeout_sec_global = timerConfToRestore.wakeUpTimeout_sec_global_value;
-			wakeUpClock = timerConfToRestore.wakeUpClock_Struct;
-			Util_startClock(&wakeUpClock);
-			if (!timerConfToRestore.wakeUpTimerActive) { //if the clock was inactive stop it immediatelly
+			if (timerConfToRestore.validData) {
 				Util_stopClock(&wakeUpClock);
-			}
-
-			//Reload goToSleep timer value
-			goToSleepClock = timerConfToRestore.goToSleepClock_Struct;
-			Util_startClock(&goToSleepClock);
-			if (!timerConfToRestore.goToSleepTimerActive) {
 				Util_stopClock(&goToSleepClock);
+
+				//Reload wakeUp timer value
+				wakeUpTimeout_sec_global = timerConfToRestore.wakeUpTimeout_sec_global_value;
+				wakeUpClock = timerConfToRestore.wakeUpClock_Struct;
+				Util_startClock(&wakeUpClock);
+				if (!timerConfToRestore.wakeUpTimerActive) { //if the clock was inactive stop it immediatelly
+					Util_stopClock(&wakeUpClock);
+				}
+
+				//Reload goToSleep timer value
+				goToSleepClock = timerConfToRestore.goToSleepClock_Struct;
+				Util_startClock(&goToSleepClock);
+				if (!timerConfToRestore.goToSleepTimerActive) {
+					Util_stopClock(&goToSleepClock);
+				}
+
+				//unvalidate data so that when no fauls occour it doesn't load an old timers configuration
+				timerConfToRestore.validData = FALSE;
+				osal_snv_write(SNV_BASE_ID + TIMERS_SNV_OFFSET_ID, sizeof(timerSNVDataStore_t), &timerConfToRestore);
+
+				return TRUE;
 			}
-
-			//unvalidate data so that when no fauls occour it doesn't load an old timers configuration
-			timerConfToRestore.validData = FALSE;
-			osal_snv_write(SNV_BASE_ID + TIMERS_SNV_OFFSET, sizeof(timerSNVDataStore_t), &timerConfToRestore);
-
-			return TRUE;
 		}
+		return FALSE;
 	}
 	return FALSE;
-
 }
 
 /*********************************************************************

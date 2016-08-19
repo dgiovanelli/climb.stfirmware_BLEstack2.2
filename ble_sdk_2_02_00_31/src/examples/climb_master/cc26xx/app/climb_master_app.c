@@ -180,6 +180,9 @@
 #define BROADCAST_MSG_TYPE_WU_SCHEDULE_CMD	  0x02
 #define BROADCAST_MSG_LENGTH_WU_SCHEDULE_CMD  0x04
 
+#define BROADCAST_MSG_TYPE_MODE_CHANGE_CMD	  0x03
+#define BROADCAST_MSG_LENGTH_MODE_CHANGE_CMD  0x02
+
 #define BROADCAST_RESET_CMD_FLAG_CMD		  0xFF
 #define BROADCAST_LENGTH_RESET_CMD_FLAG_CMD   0x01
 
@@ -187,14 +190,8 @@
 
 #define MIN_BATT_MEAS_INTERVAL_TICKS		  3000000
 
-#ifdef FEATURE_OAD
-// The size of an OAD packet.
-#define OAD_PACKET_SIZE                       ((OAD_BLOCK_SIZE) + 2)
-#endif // FEATURE_OAD
-
-
-#define SNV_BASE_ID							  0x80
-#define TIMERS_SNV_OFFSET					  0x02
+#define SNV_BASE_ID							  BLE_NVID_CUST_START
+#define TIMERS_SNV_OFFSET_ID			      0x01
 // Task configuration
 #define SBT_TASK_PRIORITY                     1
 
@@ -275,6 +272,11 @@ typedef struct {
 
 	uint8 validData;
 } timerSNVDataStore_t;
+
+typedef enum ClimbBeaconMode_t {
+	BEACON_ONLY = 1,
+	COMBO_MODE = 2,
+} ClimbBeaconMode_t;
 /*********************************************************************
  * TYPEDEFS
  */
@@ -1695,55 +1697,65 @@ static uint8 Climb_findNodeById(uint8 *nodeID, ClimbNodeType_t nodeType) {
  */
 static uint8 Climb_addNode(gapDeviceInfoEvent_t *gapDeviceInfoEvent, ClimbNodeType_t nodeType) {
 
-	uint8 freePos = 0;
+	if (gapDeviceInfoEvent->eventType == GAP_ADRPT_ADV_SCAN_IND | gapDeviceInfoEvent->eventType == GAP_ADRPT_ADV_IND | gapDeviceInfoEvent->eventType == GAP_ADRPT_ADV_NONCONN_IND) {	//adv data
+		uint8 freePos = 0;
+		if (nodeType == CLIMB_CHILD_NODE) {
 
-	if (nodeType == CLIMB_CHILD_NODE) {
+			if (gapDeviceInfoEvent->eventType == GAP_ADRPT_ADV_NONCONN_IND) { //child nodes uses only non-connectable advertising, when they are connectable they are in init-mode, and they should not be monitored
 
-		while (isNonZero(childListArray[freePos].id, CHILD_NODE_ID_LENGTH)) {
-			freePos++;
+				while (isNonZero(childListArray[freePos].id, CHILD_NODE_ID_LENGTH)) {
 
-			if (freePos >= MAX_SUPPORTED_CHILD_NODES) {
+					freePos++;
+
+					if (freePos >= MAX_SUPPORTED_CHILD_NODES) {
+						return 255;
+					}
+
+					if (gapDeviceInfoEvent->pEvtData[ADV_PKT_STATE_OFFSET] > 5) {
+						return 255;
+					}
+
+				}
+
+				childListArray[freePos].rssi = gapDeviceInfoEvent->rssi;
+				childListArray[freePos].lastContactTicks = Clock_getTicks();
+
+				memcpy(childListArray[freePos].id, &gapDeviceInfoEvent->pEvtData[ADV_PKT_ID_OFFSET], CHILD_NODE_ID_LENGTH);
+				childListArray[freePos].state = (ChildClimbNodeStateType_t) gapDeviceInfoEvent->pEvtData[ADV_PKT_STATE_OFFSET];
+				childListArray[freePos].stateToImpose = childListArray[freePos].state;
+				childListArray[freePos].contactSentThoughGATT = FALSE;
+
+				return 1;
+
+			} else {
+
 				return 255;
 			}
+		} else if (nodeType == CLIMB_MASTER_NODE) {
 
-			if(gapDeviceInfoEvent->pEvtData[ADV_PKT_STATE_OFFSET] > 5){
-				return 255;
+			while (isNonZero(masterListArray[freePos].id, MASTER_NODE_ID_LENGTH)) {
+				freePos++;
+
+				if (freePos >= MAX_SUPPORTED_MASTER_NODES) {
+					return 255;
+				}
+
 			}
 
+			masterListArray[freePos].rssi = gapDeviceInfoEvent->rssi;
+			masterListArray[freePos].lastContactTicks = Clock_getTicks();
+
+			memcpy(masterListArray[freePos].id, &gapDeviceInfoEvent->addr, MASTER_NODE_ID_LENGTH);
+			masterListArray[freePos].state = INVALID_STATE;
+			masterListArray[freePos].stateToImpose = masterListArray[freePos].state;
+			masterListArray[freePos].contactSentThoughGATT = FALSE;
+
+			return 1;
 		}
-
-		childListArray[freePos].rssi = gapDeviceInfoEvent->rssi;
-		childListArray[freePos].lastContactTicks = Clock_getTicks();
-
-		memcpy(childListArray[freePos].id, &gapDeviceInfoEvent->pEvtData[ADV_PKT_ID_OFFSET], CHILD_NODE_ID_LENGTH);
-		childListArray[freePos].state = (ChildClimbNodeStateType_t) gapDeviceInfoEvent->pEvtData[ADV_PKT_STATE_OFFSET];
-		childListArray[freePos].stateToImpose = childListArray[freePos].state;
-		childListArray[freePos].contactSentThoughGATT = FALSE;
-
-		return 1;
-	} else if (nodeType == CLIMB_MASTER_NODE) {
-
-		while (isNonZero(masterListArray[freePos].id, MASTER_NODE_ID_LENGTH)) {
-			freePos++;
-
-			if (freePos >= MAX_SUPPORTED_MASTER_NODES) {
-				return 255;
-			}
-
-		}
-
-		masterListArray[freePos].rssi = gapDeviceInfoEvent->rssi;
-		masterListArray[freePos].lastContactTicks = Clock_getTicks();
-
-		memcpy(masterListArray[freePos].id, &gapDeviceInfoEvent->addr, MASTER_NODE_ID_LENGTH);
-		masterListArray[freePos].state = INVALID_STATE;
-		masterListArray[freePos].stateToImpose = masterListArray[freePos].state;
-		masterListArray[freePos].contactSentThoughGATT = FALSE;
-
-		return 1;
+		return 0;
+	}else{ // this event is a scan response, climb system uses only adv data
+		return 255;
 	}
-	return 0;
-
 }
 
 /*********************************************************************
@@ -1864,6 +1876,12 @@ static void Climb_advertisedStatesCheck(void) {
 					}
 					break;
 
+				case BEACON:
+					if (actualNodeState != BEACON){
+						childListArray[i].stateToImpose = actualNodeState; //mantieni lo stato precedente
+					}
+					break;
+
 				case INVALID_STATE:
 					break;
 
@@ -1920,10 +1938,12 @@ static void Climb_nodeTimeoutCheck() {
 					childListArray[i].state = ALERT;
 					break;
 				case GOING_TO_SLEEP:
-					//do nothing
 					Climb_removeNode(i, CLIMB_CHILD_NODE); //rimuovi il nodo
 					break;
 
+				case BEACON:
+					Climb_removeNode(i, CLIMB_CHILD_NODE); //rimuovi il nodo
+					break;
 				default:
 					//should not reach here
 					break;
@@ -2016,6 +2036,7 @@ static void destroyChildNodeList() {
 
 			default:
 				//should not reach here
+				Climb_removeNode(i, CLIMB_CHILD_NODE); //rimuovi il nodo
 				break;
 			}
 		}
@@ -2188,6 +2209,21 @@ static void Climb_advertisedStatesUpdate(void) {
 			break;
 		}
 
+		if (children_init_mode == TRUE) {
+#if defined(INIT_CHILDREN_AS_BEACON_ONLY) ||  defined(INIT_CHILDREN_AS_COMBO_MODE)
+			newChildrenStatesData[i++] = BROADCAST_MSG_TYPE_MODE_CHANGE_CMD;
+#ifdef INIT_CHILDREN_AS_BEACON_ONLY
+			newChildrenStatesData[i++] = BEACON_ONLY;
+#else  //INIT_CHILDREN_AS_COMBO_MODE
+			newChildrenStatesData[i++] = COMBO_MODE;
+#endif
+#else
+#warning INIT_CHILDREN_AS_BEACON_ONLY nor INIT_CHILDREN_AS_COMBO_MODE are defined!
+#endif
+#if defined(INIT_CHILDREN_AS_BEACON_ONLY) &&  defined(INIT_CHILDREN_AS_COMBO_MODE)
+#warning both INIT_CHILDREN_AS_BEACON_ONLY and INIT_CHILDREN_AS_COMBO_MODE are defined! In this case COMBO_MODE has the priority
+#endif
+		}
 	}
 
 //	while (i < 30) {
@@ -2259,14 +2295,11 @@ static void Climb_preAdvEvtHandler() {
 	}
 
 	if (children_init_mode){
-		uint8 bcast_cmd = BROADCAST_MSG_TYPE_WU_SCHEDULE_CMD;
 		uint32 bcast_WU_timeout_sec = Util_getTimeout(&wakeUpClock)/1000 + wakeUpTimeout_sec_global;
-	memcpy(broadcastMessage, &bcast_cmd, BROADCAST_MSG_LENGTH_WU_SCHEDULE_CMD);
+		broadcastMessage[0] = BROADCAST_MSG_TYPE_WU_SCHEDULE_CMD;
 		broadcastMessage[1] = (0xFF) & (bcast_WU_timeout_sec >> 16);
 		broadcastMessage[2] = (0xFF) & (bcast_WU_timeout_sec >> 8);
 		broadcastMessage[3] = (0xFF) & bcast_WU_timeout_sec;
-
-		//isBroadcastMessageValid = TRUE;
 
 		Climb_advertisedStatesUpdate();
 	}
@@ -2568,8 +2601,9 @@ static void timerCallback(GPTimerCC26XX_Handle handle, GPTimerCC26XX_IntMask int
 	unclearedWatchdogEvents++;
 }
 #endif
-static void saveTimersConf(void) {
+static void saveTimersConf(void){
 	timerSNVDataStore_t timerConfToStore;
+
 
 	//timerConfToStore.wakeUpRemainingTimeout = Util_getClockTimeout(&wakeUpClock);
 	timerConfToStore.wakeUpClock_Struct = wakeUpClock;
@@ -2580,46 +2614,49 @@ static void saveTimersConf(void) {
 	timerConfToStore.wakeUpTimeout_sec_global_value = wakeUpTimeout_sec_global;
 	timerConfToStore.validData = TRUE;
 
-	//todo: verifica che la scrittura sia stata fatta realmente e non sia bufferizata
-	osal_snv_write(SNV_BASE_ID + TIMERS_SNV_OFFSET, sizeof(timerSNVDataStore_t), &timerConfToStore);
+	osal_snv_write(SNV_BASE_ID+TIMERS_SNV_OFFSET_ID, sizeof(timerSNVDataStore_t), &timerConfToStore);
 }
 
-static uint8 restoreTimersConf(){
+static uint8 restoreTimersConf() {
 
 	timerSNVDataStore_t timerConfToRestore;
 
-	uint8 ret = osal_snv_read(SNV_BASE_ID + TIMERS_SNV_OFFSET, sizeof(timerSNVDataStore_t), &timerConfToRestore);
+	uint8 ret = osal_snv_write(SNV_BASE_ID + TIMERS_SNV_OFFSET_ID, 0,  &timerConfToRestore);			//this is needed to initialize SNV
 
 	if (ret == SUCCESS) {
+		ret = osal_snv_read(SNV_BASE_ID + TIMERS_SNV_OFFSET_ID, sizeof(timerSNVDataStore_t), &timerConfToRestore);
 
-		if (timerConfToRestore.validData) {
-			Util_stopClock(&wakeUpClock);
-			Util_stopClock(&goToSleepClock);
+		if (ret == SUCCESS) {
 
-			//Reload wakeUp timer value
-			wakeUpTimeout_sec_global = timerConfToRestore.wakeUpTimeout_sec_global_value;
-			wakeUpClock = timerConfToRestore.wakeUpClock_Struct;
-			Util_startClock(&wakeUpClock);
-			if (!timerConfToRestore.wakeUpTimerActive) { //if the clock was inactive stop it immediatelly
+			if (timerConfToRestore.validData) {
 				Util_stopClock(&wakeUpClock);
-			}
-
-			//Reload goToSleep timer value
-			goToSleepClock = timerConfToRestore.goToSleepClock_Struct;
-			Util_startClock(&goToSleepClock);
-			if (!timerConfToRestore.goToSleepTimerActive) {
 				Util_stopClock(&goToSleepClock);
+
+				//Reload wakeUp timer value
+				wakeUpTimeout_sec_global = timerConfToRestore.wakeUpTimeout_sec_global_value;
+				wakeUpClock = timerConfToRestore.wakeUpClock_Struct;
+				Util_startClock(&wakeUpClock);
+				if (!timerConfToRestore.wakeUpTimerActive) { //if the clock was inactive stop it immediatelly
+					Util_stopClock(&wakeUpClock);
+				}
+
+				//Reload goToSleep timer value
+				goToSleepClock = timerConfToRestore.goToSleepClock_Struct;
+				Util_startClock(&goToSleepClock);
+				if (!timerConfToRestore.goToSleepTimerActive) {
+					Util_stopClock(&goToSleepClock);
+				}
+
+				//unvalidate data so that when no fauls occour it doesn't load an old timers configuration
+				timerConfToRestore.validData = FALSE;
+				osal_snv_write(SNV_BASE_ID + TIMERS_SNV_OFFSET_ID, sizeof(timerSNVDataStore_t), &timerConfToRestore);
+
+				return TRUE;
 			}
-
-			//unvalidate data so that when no fauls occour it doesn't load an old timers configuration
-			timerConfToRestore.validData = FALSE;
-			osal_snv_write(SNV_BASE_ID + TIMERS_SNV_OFFSET, sizeof(timerSNVDataStore_t), &timerConfToRestore);
-
-			return TRUE;
 		}
+		return FALSE;
 	}
 	return FALSE;
-
 }
 
 /*********************************************************************

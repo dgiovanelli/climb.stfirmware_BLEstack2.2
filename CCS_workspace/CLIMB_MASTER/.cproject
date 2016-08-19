@@ -96,6 +96,8 @@
 								<option id="com.ti.ccstudio.buildDefinitions.TMS470_15.12.compilerID.SAT_REASSOC.243332629" name="Allow reassociation of sat arithmetic (--sat_reassoc)" superClass="com.ti.ccstudio.buildDefinitions.TMS470_15.12.compilerID.SAT_REASSOC" value="com.ti.ccstudio.buildDefinitions.TMS470_15.12.compilerID.SAT_REASSOC.off" valueType="enumerated"/>
 								<option id="com.ti.ccstudio.buildDefinitions.TMS470_15.12.compilerID.PLAIN_CHAR.2129601206" name="Specify how to treat plain chars (signed/unsigned) (--plain_char)" superClass="com.ti.ccstudio.buildDefinitions.TMS470_15.12.compilerID.PLAIN_CHAR" value="com.ti.ccstudio.buildDefinitions.TMS470_15.12.compilerID.PLAIN_CHAR.unsigned" valueType="enumerated"/>
 								<option id="com.ti.ccstudio.buildDefinitions.TMS470_15.12.compilerID.DEFINE.1319227796" name="Pre-define NAME (--define, -D)" superClass="com.ti.ccstudio.buildDefinitions.TMS470_15.12.compilerID.DEFINE" valueType="definedSymbols">
+									<listOptionValue builtIn="false" value="INIT_CHILDREN_AS_BEACON_ONLY"/>
+									<listOptionValue builtIn="false" value="xINIT_CHILDREN_AS_COMBO_MODE"/>
 									<listOptionValue builtIn="false" value="xHIGH_PERFORMANCE"/>
 									<listOptionValue builtIn="false" value="xPRINTF_ENABLED"/>
 									<listOptionValue builtIn="false" value="xWATCHDOGTIMER_EN"/>
