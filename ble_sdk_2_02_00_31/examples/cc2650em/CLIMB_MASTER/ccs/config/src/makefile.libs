@@ -1,6 +1,6 @@
 #
 # This file was generated based on the configuration script:
-#     D:\Drive\workspaces\GIT\CLIMB\climb.stfirmware_BLEstack2.2\ble_sdk_2_02_00_31\examples\cc2650em\CLIMB_MASTER\ccs\config\app_ble.cfg
+#     D:\Drive\workspaces\GIT\CLIMB\climb.stfirmware_BLEstack2.2\ble_sdk_2_02_00_31\examples\cc2650em\climb_master\ccs\config\app_ble.cfg
 #
 # This makefile may be included in other makefiles that need to build
 # the libraries containing the compiled source files generated as
@@ -14,9 +14,9 @@
 #
 # The absolute path to the generated source directory (at the time the
 # sources were generated) is:
-#    D:\Drive\workspaces\GIT\CLIMB\climb.stfirmware_BLEstack2.2\ble_sdk_2_02_00_31\examples\cc2650em\CLIMB_MASTER\ccs\config\src
+#    D:\Drive\workspaces\GIT\CLIMB\climb.stfirmware_BLEstack2.2\ble_sdk_2_02_00_31\examples\cc2650em\climb_master\ccs\config\src
 #
-GEN_SRC_DIR ?= ../../../ble_sdk_2_02_00_31/examples/cc2650em/CLIMB_MASTER/ccs/config/src
+GEN_SRC_DIR ?= ../../../ble_sdk_2_02_00_31/examples/cc2650em/climb_master/ccs/config/src
 
 ifeq (,$(wildcard $(GEN_SRC_DIR)))
 $(error "ERROR: GEN_SRC_DIR must be set to the directory containing the generated sources")

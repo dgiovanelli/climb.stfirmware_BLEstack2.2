@@ -4,5 +4,5 @@
  */
 
 "D:\Drive\workspaces\GIT\CLIMB\climb.stfirmware_BLEstack2.2\ble_sdk_2_02_00_31\blelib\host\host_pxxo.a"
-"D:\Drive\workspaces\GIT\CLIMB\climb.stfirmware_BLEstack2.2\ble_sdk_2_02_00_31\blelib\ctrl\cc2640\cc2640_ctrl_pxxo_41c.a"
-"D:\Drive\workspaces\GIT\CLIMB\climb.stfirmware_BLEstack2.2\ble_sdk_2_02_00_31\blelib\hci_tl\cc26xx\cc26xx_hci_tl_none_v41.a"
+"D:\Drive\workspaces\GIT\CLIMB\climb.stfirmware_BLEstack2.2\ble_sdk_2_02_00_31\blelib\ctrl\cc2640\cc2640_ctrl_pxxo.a"
+"D:\Drive\workspaces\GIT\CLIMB\climb.stfirmware_BLEstack2.2\ble_sdk_2_02_00_31\blelib\hci_tl\cc26xx\cc26xx_hci_tl_none.a"

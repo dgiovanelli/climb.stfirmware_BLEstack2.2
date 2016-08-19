@@ -458,7 +458,7 @@
 		</variable>
 		<variable>
 			<name>PROJECT_IMPORT_LOC</name>
-			<value>file:/D:/Drive/workspaces/GIT/CLIMB/climb.stfirmware_BLEstack2.2/ble_sdk_2_02_00_31/examples/cc2650em/CLIMB_CHILD/ccs/stack</value>
+			<value>file:/D:/Drive/workspaces/GIT/CLIMB/climb.stfirmware_BLEstack2.2/ble_sdk_2_02_00_31/examples/cc2650em/climb_child/ccs/stack</value>
 		</variable>
 		<variable>
 			<name>ROM</name>
