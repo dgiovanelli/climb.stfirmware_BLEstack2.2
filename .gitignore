@@ -78,3 +78,5 @@ Debug/*
 RemoteSystemsTempFiles
 RemoteSystemsTempFiles/
 RemoteSystemsTempFiles/*
+
+*.obj
