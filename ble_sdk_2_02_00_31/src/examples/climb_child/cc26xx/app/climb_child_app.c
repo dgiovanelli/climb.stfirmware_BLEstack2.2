@@ -132,9 +132,9 @@
 #define SCAN_WINDOW							  80
 #else
 // Scan interval value in 0.625ms ticks
-#define SCAN_INTERVAL 						  320
+#define SCAN_INTERVAL 						  80
 // scan window value in 0.625ms ticks
-#define SCAN_WINDOW							  320
+#define SCAN_WINDOW							  80
 #endif
 
 // Scan duration in ms
