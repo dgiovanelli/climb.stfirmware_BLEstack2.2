@@ -1754,8 +1754,7 @@ static uint8 Climb_addNode(gapDeviceInfoEvent_t *gapDeviceInfoEvent, ClimbNodeTy
 
 				memcpy(childListArray[freePos].id, &gapDeviceInfoEvent->pEvtData[ADV_PKT_ID_OFFSET], CHILD_NODE_ID_LENGTH);
 				childListArray[freePos].state = (ChildClimbNodeStateType_t) gapDeviceInfoEvent->pEvtData[ADV_PKT_STATE_OFFSET];
-				childListArray[freePos].stateToImpose = childListArray[freePos].state;
-				childListArray[freePos].contactSentThoughGATT = FALSE;
+
 
 				return 1;
 
@@ -1779,8 +1778,6 @@ static uint8 Climb_addNode(gapDeviceInfoEvent_t *gapDeviceInfoEvent, ClimbNodeTy
 
 			memcpy(masterListArray[freePos].id, &gapDeviceInfoEvent->addr, MASTER_NODE_ID_LENGTH);
 			masterListArray[freePos].state = INVALID_STATE;
-			masterListArray[freePos].stateToImpose = masterListArray[freePos].state;
-			masterListArray[freePos].contactSentThoughGATT = FALSE;
 
 			return 1;
 		}
