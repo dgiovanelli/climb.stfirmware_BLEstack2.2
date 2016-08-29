@@ -167,10 +167,10 @@ extern uint8* HalFlashGetAddress( uint8 pg, uint16 offset );
  */
 #if defined(__IAR_SYSTEMS_ICC__)
 #pragma data_alignment=4096
-const uint8 NV_FLASH[FLASH_PAGE_SIZE] @ ".snvSectors";
+const uint8 NV_FLASH[FLASH_PAGE_SIZE] = {0xFF}; /*@ ".snvSectors";*/ /*Fix suggested from: https://e2e.ti.com/support/wireless_connectivity/bluetooth_low_energy/f/538/p/530696/1942788#1942788*/ 
 #elif defined __TI_COMPILER_VERSION || defined __TI_COMPILER_VERSION__
 #pragma location = (SNV_FIRST_PAGE << 12);
-const uint8 NV_FLASH[FLASH_PAGE_SIZE] = {0x00};
+const uint8 NV_FLASH[FLASH_PAGE_SIZE] = {0xFF}; /*{0x00};*/ /*Fix suggested from: https://e2e.ti.com/support/wireless_connectivity/bluetooth_low_energy/f/538/p/530696/1942788#1942788*/ 
 #else
 #error "Unknown Compiler! Support for SNV not provided!"
 #endif 

@@ -56,6 +56,8 @@
 /*   files compiled using Keil (ARM compiler)                                */
 --diag_suppress=10063,16011,16012
 
+/*-l ccs_linker_defines.cmd*/
+
 /* The following command line options are set as part of the CCS project.    */
 	/* If you are building using the command line, or for some reason want to    */
 /* define them here, you can uncomment and modify these lines as needed.     */

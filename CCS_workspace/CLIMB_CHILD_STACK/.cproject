@@ -72,7 +72,7 @@
 									<listOptionValue builtIn="false" value="FLASH_ROM_BUILD"/>
 									<listOptionValue builtIn="false" value="POWER_SAVING"/>
 									<listOptionValue builtIn="false" value="INCLUDE_AES_DECRYPT"/>
-									<listOptionValue builtIn="false" value="OSAL_SNV=2"/>
+									<listOptionValue builtIn="false" value="OSAL_SNV=1"/>
 									<listOptionValue builtIn="false" value="xPM_DISABLE_PWRDOWN"/>
 									<listOptionValue builtIn="false" value="xTESTMODES"/>
 									<listOptionValue builtIn="false" value="xTESTBLEBOARD"/>
@@ -122,6 +122,7 @@
 								<option id="com.ti.ccstudio.buildDefinitions.TMS470_5.2.linkerID.SEARCH_PATH.221522732" name="Add &lt;dir&gt; to library search path (--search_path, -i)" superClass="com.ti.ccstudio.buildDefinitions.TMS470_5.2.linkerID.SEARCH_PATH" valueType="libPaths">
 									<listOptionValue builtIn="false" value="&quot;${CG_TOOL_ROOT}/lib&quot;"/>
 									<listOptionValue builtIn="false" value="&quot;${CG_TOOL_ROOT}/include&quot;"/>
+									<listOptionValue builtIn="false" value="&quot;${PROJECT_IMPORT_LOC}/../ccs/config&quot;"/>
 								</option>
 								<option id="com.ti.ccstudio.buildDefinitions.TMS470_5.2.linkerID.DIAG_WRAP.1027908313" name="Wrap diagnostic messages (--diag_wrap)" superClass="com.ti.ccstudio.buildDefinitions.TMS470_5.2.linkerID.DIAG_WRAP" value="com.ti.ccstudio.buildDefinitions.TMS470_5.2.linkerID.DIAG_WRAP.off" valueType="enumerated"/>
 								<option id="com.ti.ccstudio.buildDefinitions.TMS470_5.2.linkerID.DIAG_SUPPRESS.960278836" name="Suppress diagnostic &lt;id&gt; (--diag_suppress)" superClass="com.ti.ccstudio.buildDefinitions.TMS470_5.2.linkerID.DIAG_SUPPRESS" valueType="stringList">

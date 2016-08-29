@@ -554,7 +554,10 @@ void OAD_imgIdentifyWrite(uint16_t connHandle, uint8_t *pValue)
   OADTarget_storeImageHeader(pValue);
 
   // Read out running image's header.
-  OADTarget_getCurrentImageHeader(&ImgHdr);
+  uint8_t ret = OADTarget_getCurrentImageHeader(&ImgHdr);
+  if(!ret){
+	  OAD_rejectImage(connHandle, &ImgHdr);
+  }
 
   // Calculate block total of the new image.
   oadBlkTot = BUILD_UINT16(pValue[hdrOffset + 2], pValue[hdrOffset + 3]) /

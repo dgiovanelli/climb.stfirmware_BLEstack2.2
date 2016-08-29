@@ -217,7 +217,7 @@ define region INT_VEC         = mem:[from INT_VEC_START to INT_VEC_END];
 if ( isdefinedsymbol(RTOS_ROM) )
 {
   define region FLASH_LAST_PAGE = mem:[from 0x1FB00 to 0x1FFA7];
-  define region FLASH           = FLASH_LAST_PAGE |
+  define region FLASH           = //FLASH_LAST_PAGE |
                                   mem:[from OAD_FLASH_START to FLASH_END];
 }
 else
