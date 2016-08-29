@@ -77,6 +77,7 @@
 #include "oad_target.h"
 #include "oad.h"
 #endif //FEATURE_OAD || IMAGE_INVALIDATE
+
 #include <xdc/runtime/Types.h>
 #include <ti/sysbios/BIOS.h>
 
@@ -176,8 +177,8 @@
 #define CHILD_NODE_ID_LENGTH				  1
 #define MASTER_NODE_ID_LENGTH				  6
 
-#define MAX_SUPPORTED_CHILD_NODES			  70
-#define MAX_SUPPORTED_MASTER_NODES			  10
+#define MAX_SUPPORTED_CHILD_NODES			  40
+#define MAX_SUPPORTED_MASTER_NODES			  5
 #if MAX_SUPPORTED_CHILD_NODES+MAX_SUPPORTED_MASTER_NODES < 80
 #warning MAX_SUPPORTED_CHILD_NODES is low because of debugging pourposes, it can be set to 90
 #endif
@@ -1663,8 +1664,6 @@ static uint8_t simpleTopology_eventCB(gapMultiRoleEvent_t *pEvent) {
 	return TRUE;
 }
 
-
-
 /*********************************************************************
  * @fn      simpleTopology_charValueChangeCB
  *
@@ -2859,60 +2858,60 @@ static void timerCallback(GPTimerCC26XX_Handle handle, GPTimerCC26XX_IntMask int
 #endif
 
 static void saveTimersConf(void){
-	timerSNVDataStore_t timerConfToStore;
-
-
-	//timerConfToStore.wakeUpRemainingTimeout = Util_getClockTimeout(&wakeUpClock);
-	timerConfToStore.wakeUpClock_Struct = wakeUpClock;
-	timerConfToStore.wakeUpTimerActive = Util_isActive(&wakeUpClock);
-	//timerConfToStore.goToSleepRamainingTimeout = Util_getClockTimeout(&goToSleepClock);
-	timerConfToStore.goToSleepClock_Struct = goToSleepClock;
-	timerConfToStore.goToSleepTimerActive = Util_isActive(&goToSleepClock);
-	timerConfToStore.wakeUpTimeout_sec_global_value = wakeUpTimeout_sec_global;
-	timerConfToStore.validData = TRUE;
-
-	osal_snv_write(SNV_BASE_ID+TIMERS_SNV_OFFSET_ID, sizeof(timerSNVDataStore_t), &timerConfToStore);
+//	timerSNVDataStore_t timerConfToStore;
+//
+//
+//	//timerConfToStore.wakeUpRemainingTimeout = Util_getClockTimeout(&wakeUpClock);
+//	timerConfToStore.wakeUpClock_Struct = wakeUpClock;
+//	timerConfToStore.wakeUpTimerActive = Util_isActive(&wakeUpClock);
+//	//timerConfToStore.goToSleepRamainingTimeout = Util_getClockTimeout(&goToSleepClock);
+//	timerConfToStore.goToSleepClock_Struct = goToSleepClock;
+//	timerConfToStore.goToSleepTimerActive = Util_isActive(&goToSleepClock);
+//	timerConfToStore.wakeUpTimeout_sec_global_value = wakeUpTimeout_sec_global;
+//	timerConfToStore.validData = TRUE;
+//
+//	osal_snv_write(SNV_BASE_ID+TIMERS_SNV_OFFSET_ID, sizeof(timerSNVDataStore_t), &timerConfToStore);
 }
 
 static uint8 restoreTimersConf() {
 
-	timerSNVDataStore_t timerConfToRestore;
-
-	uint8 ret = osal_snv_write(SNV_BASE_ID + TIMERS_SNV_OFFSET_ID, 0,  &timerConfToRestore);			//this is needed to initialize SNV
-
-	if (ret == SUCCESS) {
-		ret = osal_snv_read(SNV_BASE_ID + TIMERS_SNV_OFFSET_ID, sizeof(timerSNVDataStore_t), &timerConfToRestore);
-
-		if (ret == SUCCESS) {
-
-			if (timerConfToRestore.validData) {
-				Util_stopClock(&wakeUpClock);
-				Util_stopClock(&goToSleepClock);
-
-				//Reload wakeUp timer value
-				wakeUpTimeout_sec_global = timerConfToRestore.wakeUpTimeout_sec_global_value;
-				wakeUpClock = timerConfToRestore.wakeUpClock_Struct;
-				Util_startClock(&wakeUpClock);
-				if (!timerConfToRestore.wakeUpTimerActive) { //if the clock was inactive stop it immediatelly
-					Util_stopClock(&wakeUpClock);
-				}
-
-				//Reload goToSleep timer value
-				goToSleepClock = timerConfToRestore.goToSleepClock_Struct;
-				Util_startClock(&goToSleepClock);
-				if (!timerConfToRestore.goToSleepTimerActive) {
-					Util_stopClock(&goToSleepClock);
-				}
-
-				//unvalidate data so that when no fauls occour it doesn't load an old timers configuration
-				timerConfToRestore.validData = FALSE;
-				osal_snv_write(SNV_BASE_ID + TIMERS_SNV_OFFSET_ID, sizeof(timerSNVDataStore_t), &timerConfToRestore);
-
-				return TRUE;
-			}
-		}
-		return FALSE;
-	}
+//	timerSNVDataStore_t timerConfToRestore;
+//
+//	uint8 ret = osal_snv_write(SNV_BASE_ID + TIMERS_SNV_OFFSET_ID, 0,  &timerConfToRestore);			//this is needed to initialize SNV
+//
+//	if (ret == SUCCESS) {
+//		ret = osal_snv_read(SNV_BASE_ID + TIMERS_SNV_OFFSET_ID, sizeof(timerSNVDataStore_t), &timerConfToRestore);
+//
+//		if (ret == SUCCESS) {
+//
+//			if (timerConfToRestore.validData) {
+//				Util_stopClock(&wakeUpClock);
+//				Util_stopClock(&goToSleepClock);
+//
+//				//Reload wakeUp timer value
+//				wakeUpTimeout_sec_global = timerConfToRestore.wakeUpTimeout_sec_global_value;
+//				wakeUpClock = timerConfToRestore.wakeUpClock_Struct;
+//				Util_startClock(&wakeUpClock);
+//				if (!timerConfToRestore.wakeUpTimerActive) { //if the clock was inactive stop it immediatelly
+//					Util_stopClock(&wakeUpClock);
+//				}
+//
+//				//Reload goToSleep timer value
+//				goToSleepClock = timerConfToRestore.goToSleepClock_Struct;
+//				Util_startClock(&goToSleepClock);
+//				if (!timerConfToRestore.goToSleepTimerActive) {
+//					Util_stopClock(&goToSleepClock);
+//				}
+//
+//				//unvalidate data so that when no fauls occour it doesn't load an old timers configuration
+//				timerConfToRestore.validData = FALSE;
+//				osal_snv_write(SNV_BASE_ID + TIMERS_SNV_OFFSET_ID, sizeof(timerSNVDataStore_t), &timerConfToRestore);
+//
+//				return TRUE;
+//			}
+//		}
+//		return FALSE;
+//	}
 	return FALSE;
 }
 
