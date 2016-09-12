@@ -117,8 +117,9 @@ static PIN_Config KeysPinTable[] =
 {
     Board_KEY_LEFT   | PIN_INPUT_EN | PIN_PULLUP | PIN_IRQ_BOTHEDGES | PIN_HYSTERESIS,        /* Button is active low          */
     Board_KEY_RIGHT  | PIN_INPUT_EN | PIN_PULLUP | PIN_IRQ_BOTHEDGES | PIN_HYSTERESIS,        /* Button is active low          */
-//    Board_RELAY      | PIN_INPUT_EN | PIN_PULLDOWN | PIN_IRQ_BOTHEDGES | PIN_HYSTERESIS,      /* Relay is active high          */
-
+#ifdef CC2650STK
+    Board_RELAY      | PIN_INPUT_EN | PIN_PULLDOWN | PIN_IRQ_BOTHEDGES | PIN_HYSTERESIS,      /* Relay is active high          */
+#endif
     PIN_TERMINATE
 };
 
@@ -378,10 +379,11 @@ static void Key_callback(PIN_Handle handle, PIN_Id pinId)
 	if(pinId == Board_KEY_RIGHT){
 		keysTask_setEvent(KEY_RIGHT_EVT);
 	}
-#warning Board_RELAY
-//	if(pinId == Board_RELAY){
-//		keysTask_setEvent(KEY_RELAY_EVT);
-//	}
+#ifdef CC2650STK
+	if(pinId == Board_RELAY){
+		keysTask_setEvent(KEY_RELAY_EVT);
+	}
+#endif
 }
 
 /*********************************************************************
