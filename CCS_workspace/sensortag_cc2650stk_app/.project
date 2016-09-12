@@ -174,12 +174,12 @@
 		<link>
 			<name>Application/sensortag_oad.c</name>
 			<type>1</type>
-			<locationURI>PARENT-5-PROJECT_LOC/src/examples/sensortag/cc26xx/app/sensortag_oad.c</locationURI>
+			<locationURI>SRC_EX/examples/sensortag/cc26xx/app/sensortag_oad.c</locationURI>
 		</link>
 		<link>
 			<name>Application/sensortag_oad.h</name>
 			<type>1</type>
-			<locationURI>PARENT-5-PROJECT_LOC/src/examples/sensortag/cc26xx/app/sensortag_oad.h</locationURI>
+			<locationURI>SRC_EX/examples/sensortag/cc26xx/app/sensortag_oad.h</locationURI>
 		</link>
 		<link>
 			<name>Application/sensortag_opt.c</name>
