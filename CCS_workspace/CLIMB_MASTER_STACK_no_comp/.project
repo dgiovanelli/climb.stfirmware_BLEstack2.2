@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <projectDescription>
-	<name>CLIMB_MASTER_STACK</name>
+	<name>CLIMB_MASTER_STACK_no_comp</name>
 	<comment></comment>
 	<projects>
 	</projects>
@@ -454,11 +454,11 @@
 	<variableList>
 		<variable>
 			<name>CC26XXWARE</name>
-			<value>file:/D:/Programmi/ti/tirtos_cc13xx_cc26xx_2_18_00_03/products/cc26xxware_2_23_03_17162</value>
+			<value>file:/c:/TI/tirtos_cc13xx_cc26xx_2_18_00_03/products/cc26xxware_2_23_03_17162</value>
 		</variable>
 		<variable>
 			<name>PROJECT_IMPORT_LOC</name>
-			<value>file:/D:/Drive/workspaces/GIT/CLIMB/climb.stfirmware_BLEstack2.2/ble_sdk_2_02_00_31/examples/cc2650em/climb_master/ccs/stack</value>
+			<value>file:/f:/workspaces/GIT/CLIMB/climb.stfirmware_BLEstack2.2/ble_sdk_2_02_00_31/examples/cc2650em/climb_master/ccs/stack</value>
 		</variable>
 		<variable>
 			<name>ROM</name>
@@ -478,11 +478,11 @@
 		</variable>
 		<variable>
 			<name>TI_BLE_SDK_BASE</name>
-			<value>file:/D:/Drive/workspaces/GIT/CLIMB/climb.stfirmware_BLEstack2.2/ble_sdk_2_02_00_31</value>
+			<value>file:/f:/workspaces/GIT/CLIMB/climb.stfirmware_BLEstack2.2/ble_sdk_2_02_00_31</value>
 		</variable>
 		<variable>
 			<name>TI_RTOS_DRIVERS_BASE</name>
-			<value>file:/D:/Programmi/ti/tirtos_cc13xx_cc26xx_2_18_00_03/products/tidrivers_cc13xx_cc26xx_2_16_01_13/packages</value>
+			<value>file:/c:/TI/tirtos_cc13xx_cc26xx_2_18_00_03/products/tidrivers_cc13xx_cc26xx_2_16_01_13/packages</value>
 		</variable>
 		<variable>
 			<name>TOOLS_BLE</name>

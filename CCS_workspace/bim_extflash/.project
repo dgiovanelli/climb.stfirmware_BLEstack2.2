@@ -99,7 +99,7 @@
 	<variableList>
 		<variable>
 			<name>CC26XXWARE</name>
-			<value>file:/D:/Programmi/ti/tirtos_cc13xx_cc26xx_2_18_00_03/products/cc26xxware_2_23_03_17162</value>
+			<value>file:/c:/ti/tirtos_cc13xx_cc26xx_2_18_00_03/products/cc26xxware_2_23_03_17162</value>
 		</variable>
 		<variable>
 			<name>ORG_PROJ_DIR</name>
@@ -107,7 +107,7 @@
 		</variable>
 		<variable>
 			<name>ORIGINAL_PROJECT_ROOT</name>
-			<value>file:/D:/Drive/workspaces/GIT/CLIMB/climb.stfirmware_BLEstack2.2/ble_sdk_2_02_00_31/examples/util/bim_extflash/cc2640/ccs</value>
+			<value>file:/f:/workspaces/GIT/CLIMB/climb.stfirmware_BLEstack2.2/ble_sdk_2_02_00_31/examples/util/bim_extflash/cc2640/ccs</value>
 		</variable>
 		<variable>
 			<name>ROM</name>

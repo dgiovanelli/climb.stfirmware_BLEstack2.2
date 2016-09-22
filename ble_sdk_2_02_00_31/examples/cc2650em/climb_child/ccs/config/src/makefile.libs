@@ -1,6 +1,6 @@
 #
 # This file was generated based on the configuration script:
-#     D:\Drive\workspaces\GIT\CLIMB\climb.stfirmware_BLEstack2.2\ble_sdk_2_02_00_31\examples\cc2650em\climb_child\ccs\config\app_ble.cfg
+#     F:\workspaces\GIT\CLIMB\climb.stfirmware_BLEstack2.2\ble_sdk_2_02_00_31\examples\cc2650em\climb_child\ccs\config\app_ble.cfg
 #
 # This makefile may be included in other makefiles that need to build
 # the libraries containing the compiled source files generated as
@@ -14,7 +14,7 @@
 #
 # The absolute path to the generated source directory (at the time the
 # sources were generated) is:
-#    D:\Drive\workspaces\GIT\CLIMB\climb.stfirmware_BLEstack2.2\ble_sdk_2_02_00_31\examples\cc2650em\climb_child\ccs\config\src
+#    F:\workspaces\GIT\CLIMB\climb.stfirmware_BLEstack2.2\ble_sdk_2_02_00_31\examples\cc2650em\climb_child\ccs\config\src
 #
 GEN_SRC_DIR ?= ../../../ble_sdk_2_02_00_31/examples/cc2650em/climb_child/ccs/config/src
 
@@ -33,7 +33,7 @@ endif
 # ======== library macros ========
 #
 sysbios_SRC = $(GEN_SRC_DIR)/sysbios
-sysbios_LIB = $(GEN_SRC_DIR)/sysbios/rom_sysbios.aem3
+sysbios_LIB = $(GEN_SRC_DIR)/sysbios/sysbios.aem3
 
 #
 # ======== dependencies ========
@@ -44,7 +44,7 @@ clean: .sysbios_clean
 
 # ======== convenient build goals ========
 .PHONY: sysbios
-sysbios: $(GEN_SRC_DIR)/sysbios/rom_sysbios.aem3
+sysbios: $(GEN_SRC_DIR)/sysbios/sysbios.aem3
 
 # CDT managed make executables depend on $(OBJS)
 OBJS += $(sysbios_LIB)

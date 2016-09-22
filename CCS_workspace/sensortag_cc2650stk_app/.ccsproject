@@ -9,7 +9,7 @@
 	<linkerCommandFile value="cc26x0f128.cmd"/>
 	<rts value="libc.a"/>
 	<createSlaveProjects value=""/>
-	<connection value="common/targetdb/connections/TIXDS110_Connection.xml"/>
+	<connection value="common/targetdb/connections/TIXDS100v3_Dot7_Connection.xml"/>
 	<isTargetManual value="false"/>
 	<origin value="D:/Drive/workspaces/GIT/CLIMB/climb.stfirmware_BLEstack2.2/ble_sdk_2_02_00_31/examples/cc2650stk/sensortag/ccs/app"/>
 </projectOptions>

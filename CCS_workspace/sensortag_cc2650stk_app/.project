@@ -750,7 +750,7 @@
 	<variableList>
 		<variable>
 			<name>CC26XXWARE</name>
-			<value>file:/D:/Programmi/ti/tirtos_cc13xx_cc26xx_2_18_00_03/products/cc26xxware_2_23_03_17162</value>
+			<value>file:/c:/ti/tirtos_cc13xx_cc26xx_2_18_00_03/products/cc26xxware_2_23_03_17162</value>
 		</variable>
 		<variable>
 			<name>ORG_PROJ_DIR</name>
@@ -758,7 +758,7 @@
 		</variable>
 		<variable>
 			<name>ORIGINAL_PROJECT_ROOT</name>
-			<value>file:/D:/Drive/workspaces/GIT/CLIMB/climb.stfirmware_BLEstack2.2/ble_sdk_2_02_00_31/examples/cc2650stk/sensortag/ccs/app</value>
+			<value>file:/f:/workspaces/GIT/CLIMB/climb.stfirmware_BLEstack2.2/ble_sdk_2_02_00_31/examples/cc2650stk/sensortag/ccs/app</value>
 		</variable>
 		<variable>
 			<name>ROM</name>
@@ -778,7 +778,7 @@
 		</variable>
 		<variable>
 			<name>TI_RTOS_DRIVERS_BASE</name>
-			<value>file:/D:/Programmi/ti/tirtos_cc13xx_cc26xx_2_18_00_03/products/tidrivers_cc13xx_cc26xx_2_16_01_13/packages</value>
+			<value>file:/c:/ti/tirtos_cc13xx_cc26xx_2_18_00_03/products/tidrivers_cc13xx_cc26xx_2_16_01_13/packages</value>
 		</variable>
 		<variable>
 			<name>TOOLS_BLE</name>

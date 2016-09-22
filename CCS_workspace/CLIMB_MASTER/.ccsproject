@@ -10,7 +10,7 @@
 	<linkerCommandFile value="cc26xx_app.cmd"/>
 	<rts value="libc.a"/>
 	<createSlaveProjects value=""/>
-	<origin value="D:\Drive\workspaces\GIT\CLIMB\climb.stfirmware_BLEstack2.2\ble_sdk_2_02_00_31\examples\cc2650em\climb_master\ccs\app\multi_role_cc2650em_app.projectspec"/>
+	<origin value="f:\workspaces\GIT\CLIMB\climb.stfirmware_BLEstack2.2\ble_sdk_2_02_00_31\examples\cc2650em\climb_master\ccs\app\multi_role_cc2650em_app.projectspec"/>
 	<templateProperties value="id=multi_role_cc2650em_app.projectspec.multi_role_cc2650em_app,type=rtsc,products=com.ti.rtsc.TIRTOSCC13XX_CC26XX:2.18.00.03,xdcToolsVersion=3.32.00.06,target=ti.targets.arm.elf.M3,platform=ti.platforms.simplelink:CC2650F128,buildProfile=release,isHybrid=true,configuroOptions=--compileOptions &quot;${COMPILER_FLAGS} &quot; --xdcpath &quot;${TI_BLE_SDK_BASE} &quot;,"/>
 	<isTargetManual value="false"/>
 </projectOptions>
