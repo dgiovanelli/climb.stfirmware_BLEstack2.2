@@ -82,6 +82,10 @@
 #include <ti/mw/sensors/SensorBmp280.h>
 #include <ti/mw/sensors/SensorOpt3001.h>
 #include <ti/mw/sensors/SensorMpu9250.h>
+
+#ifdef PRINTF_ENABLED
+#include <xdc/runtime/System.h>
+#endif
 /*********************************************************************
  * CONSTANTS
  */
@@ -1282,6 +1286,12 @@ static void simpleTopology_processRoleEvent(gapMultiRoleEvent_t *pEvent) {
 				GAPRole_SetParameter(GAPROLE_ADV_NONCONN_ENABLED, sizeof(uint8_t), &adv_active, NULL);
 			}
 
+#ifdef PRINTF_ENABLED
+			System_printf("Connected to: ");
+			System_printf(Util_convertBdAddr2Str(pEvent->linkCmpl.devAddr));
+			System_printf("\n");
+#endif
+
 		} else {
 			connHandle = GAP_CONNHANDLE_INIT;
 			discState = BLE_DISC_STATE_IDLE;
@@ -1315,7 +1325,9 @@ static void simpleTopology_processRoleEvent(gapMultiRoleEvent_t *pEvent) {
 
 		simpleTopology_freeAttRsp(bleNotConnected);
 		discState = BLE_DISC_STATE_IDLE;
-
+#ifdef PRINTF_ENABLED
+		System_printf("Disconnected");
+#endif
 	}
 		break;
 

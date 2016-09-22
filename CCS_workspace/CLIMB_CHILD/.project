@@ -217,6 +217,16 @@
 			<locationURI>virtual:/virtual</locationURI>
 		</link>
 		<link>
+			<name>Middleware/uart_printf.c</name>
+			<type>1</type>
+			<locationURI>SRC_EX/components/uart_printf/uart_printf.c</locationURI>
+		</link>
+		<link>
+			<name>Middleware/uart_printf.h</name>
+			<type>1</type>
+			<locationURI>SRC_EX/components/uart_printf/uart_printf.h</locationURI>
+		</link>
+		<link>
 			<name>Profiles/ClimbProfile.c</name>
 			<type>1</type>
 			<locationURI>TI_BLE_SDK_BASE/src/profiles/climb/ClimbProfile.c</locationURI>

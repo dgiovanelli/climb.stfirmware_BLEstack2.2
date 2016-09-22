@@ -50,6 +50,11 @@
 #include "climb_child_app.h"
 #include "Keys_Task.h"
 
+#ifdef PRINTF_ENABLED
+#include "uart_printf.h"
+#include <xdc/runtime/System.h>
+#endif
+
 /* Header files required to enable instruction fetch cache */
 #include <inc/hw_memmap.h>
 #ifdef CACHE_AS_RAM
@@ -136,6 +141,16 @@ int main()
   Power_setConstraint(PowerCC26XX_IDLE_PD_DISALLOW);
 #endif //POWER_SAVING
   
+
+#ifdef PRINTF_ENABLED
+  // Enable System_printf(..) UART output
+    UART_Params uartParams;
+    UART_Params_init(&uartParams);
+    uartParams.baudRate = 1000000;
+    UartPrintf_init(UART_open(Board_UART, &uartParams));
+
+    System_printf("Printf enabled\r\n");
+#endif
   /* Initialize ICall module */
   ICall_init();
   

@@ -92,6 +92,10 @@
 #include <ti/mw/sensors/SensorMpu9250.h>
 
 #include <driverlib/aon_batmon.h>
+
+#ifdef PRINTF_ENABLED
+#include <xdc/runtime/System.h>
+#endif
 /*********************************************************************
  * CONSTANTS
  */
