@@ -292,6 +292,21 @@
 			<locationURI>TI_BLE_SDK_BASE/src/profiles/roles/cc26xx/multi_giova.h</locationURI>
 		</link>
 		<link>
+			<name>Profiles/oad.c</name>
+			<type>1</type>
+			<locationURI>SRC_EX/profiles/oad/cc26xx/oad.c</locationURI>
+		</link>
+		<link>
+			<name>Profiles/oad.h</name>
+			<type>1</type>
+			<locationURI>SRC_EX/profiles/oad/cc26xx/oad.h</locationURI>
+		</link>
+		<link>
+			<name>Profiles/oad_target_external_flash.c</name>
+			<type>1</type>
+			<locationURI>SRC_EX/profiles/oad/cc26xx/oad_target_external_flash.c</locationURI>
+		</link>
+		<link>
 			<name>Startup/board.c</name>
 			<type>1</type>
 			<locationURI>SRC_BLE_CORE/target/board.c</locationURI>
@@ -315,6 +330,11 @@
 			<name>TOOLS/cc26xx_app.cmd</name>
 			<type>1</type>
 			<locationURI>SRC_EX/common/cc26xx/ccs/cc26xx_app.cmd</locationURI>
+		</link>
+		<link>
+			<name>TOOLS/cc26xx_app_oad.cmd</name>
+			<type>1</type>
+			<locationURI>SRC_EX/common/cc26xx/ccs/cc26xx_app_oad.cmd</locationURI>
 		</link>
 		<link>
 			<name>TOOLS/ccs_compiler_defines.bcfg</name>

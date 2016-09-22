@@ -202,6 +202,210 @@
 			</storageModule>
 			<storageModule moduleId="org.eclipse.cdt.core.externalSettings"/>
 		</cconfiguration>
+		<cconfiguration id="com.ti.ccstudio.buildDefinitions.TMS470.Debug.259340128.1849379735">
+			<storageModule buildSystemId="org.eclipse.cdt.managedbuilder.core.configurationDataProvider" id="com.ti.ccstudio.buildDefinitions.TMS470.Debug.259340128.1849379735" moduleId="org.eclipse.cdt.core.settings" name="FlashOnly_OAD_ExtFlash">
+				<macros>
+					<stringMacro name="TI_RTOS_DRIVERS_BASE" type="VALUE_PATH_DIR" value="c:\TI\tirtos_cc13xx_cc26xx_2_18_00_03/products/tidrivers_cc13xx_cc26xx_2_16_01_13/packages"/>
+					<stringMacro name="PROJECT_IMPORT_LOC" type="VALUE_PATH_DIR" value="f:/workspaces/GIT/CLIMB/climb.stfirmware_BLEstack2.2/ble_sdk_2_02_00_31/examples/cc2650em/climb_master/ccs/app"/>
+					<stringMacro name="CC26XXWARE" type="VALUE_PATH_DIR" value="c:\TI\tirtos_cc13xx_cc26xx_2_18_00_03/products/cc26xxware_2_23_03_17162"/>
+					<stringMacro name="TI_BLE_SDK_BASE" type="VALUE_PATH_DIR" value="f:\workspaces\GIT\CLIMB\climb.stfirmware_BLEstack2.2\ble_sdk_2_02_00_31"/>
+				</macros>
+				<externalSettings/>
+				<extensions>
+					<extension id="com.ti.ccstudio.errorparser.CoffErrorParser" point="org.eclipse.cdt.core.ErrorParser"/>
+					<extension id="com.ti.ccstudio.errorparser.LinkErrorParser" point="org.eclipse.cdt.core.ErrorParser"/>
+					<extension id="com.ti.ccstudio.errorparser.AsmErrorParser" point="org.eclipse.cdt.core.ErrorParser"/>
+					<extension id="org.eclipse.rtsc.xdctools.parsers.ErrorParser" point="org.eclipse.cdt.core.ErrorParser"/>
+					<extension id="org.eclipse.cdt.core.GmakeErrorParser" point="org.eclipse.cdt.core.ErrorParser"/>
+					<extension id="com.ti.ccstudio.binaryparser.CoffParser" point="org.eclipse.cdt.core.BinaryParser"/>
+				</extensions>
+			</storageModule>
+			<storageModule moduleId="cdtBuildSystem" version="4.0.0">
+				<configuration artifactExtension="out" artifactName="${ProjName}" buildProperties="" cleanCommand="${CG_CLEAN_CMD}" description="" errorParsers="org.eclipse.rtsc.xdctools.parsers.ErrorParser;com.ti.ccstudio.errorparser.CoffErrorParser;com.ti.ccstudio.errorparser.LinkErrorParser;com.ti.ccstudio.errorparser.AsmErrorParser;org.eclipse.cdt.core.GmakeErrorParser" id="com.ti.ccstudio.buildDefinitions.TMS470.Debug.259340128.1849379735" name="FlashOnly_OAD_ExtFlash" parent="com.ti.ccstudio.buildDefinitions.TMS470.Debug" postbuildStep="${CG_TOOL_HEX} -order MS --memwidth=8 --romwidth=8 --intel -o      ${ProjName}.hex ${ProjName}.out;&quot;C:\Python27\python&quot; &quot;${TI_BLE_SDK_BASE}/tools/scripts/oad/oad_image_tool.py&quot; &quot;${PROJECT_LOC}/FlashOnly_OAD_ExtFlash/${ProjName}.hex&quot; &quot;${PROJECT_LOC}/../${ProjName}_STACK/Debug/${ProjName}_STACK.hex&quot; -t offchip -i app -m 0x1000 -v 0 -o &quot;${PROJECT_LOC}/FlashOnly_OAD_ExtFlash/${ProjName}_merge.hex&quot;;" prebuildStep="">
+					<folderInfo id="com.ti.ccstudio.buildDefinitions.TMS470.Debug.259340128.1849379735." name="/" resourcePath="">
+						<toolChain id="com.ti.ccstudio.buildDefinitions.TMS470_16.6.exe.DebugToolchain.405093407" name="TI Build Tools" superClass="com.ti.ccstudio.buildDefinitions.TMS470_16.6.exe.DebugToolchain" targetTool="com.ti.ccstudio.buildDefinitions.TMS470_16.6.exe.linkerDebug.1313149204">
+							<option id="com.ti.ccstudio.buildDefinitions.core.OPT_TAGS.1506873374" superClass="com.ti.ccstudio.buildDefinitions.core.OPT_TAGS" valueType="stringList">
+								<listOptionValue builtIn="false" value="DEVICE_CONFIGURATION_ID=Cortex M.CC2650F128"/>
+								<listOptionValue builtIn="false" value="DEVICE_ENDIANNESS=little"/>
+								<listOptionValue builtIn="false" value="OUTPUT_FORMAT=ELF"/>
+								<listOptionValue builtIn="false" value="PRODUCTS=com.ti.rtsc.TIRTOSCC13XX_CC26XX:2.18.0.03;"/>
+								<listOptionValue builtIn="false" value="RUNTIME_SUPPORT_LIBRARY=&quot;libc.a&quot;"/>
+								<listOptionValue builtIn="false" value="RTSC_MBS_VERSION=2.2.0"/>
+								<listOptionValue builtIn="false" value="XDC_VERSION=3.32.0.06_core"/>
+								<listOptionValue builtIn="false" value="INACTIVE_REPOS="/>
+								<listOptionValue builtIn="false" value="EXPANDED_REPOS="/>
+								<listOptionValue builtIn="false" value="LINKER_COMMAND_FILE="/>
+								<listOptionValue builtIn="false" value="CCS_MBS_VERSION=5.5.0"/>
+								<listOptionValue builtIn="false" value="LINK_ORDER=TOOLS/ccs_linker_defines.cmd;TOOLS/cc26xx_app_oad.cmd;"/>
+								<listOptionValue builtIn="false" value="RTSC_PRODUCTS=com.ti.rtsc.TIRTOSCC13XX_CC26XX:2.18.0.03;"/>
+								<listOptionValue builtIn="false" value="OUTPUT_TYPE=rtscApplication:executable"/>
+							</option>
+							<option id="com.ti.ccstudio.buildDefinitions.core.OPT_CODEGEN_VERSION.1606377783" name="Compiler version" superClass="com.ti.ccstudio.buildDefinitions.core.OPT_CODEGEN_VERSION" value="16.6.0.STS" valueType="string"/>
+							<targetPlatform id="com.ti.ccstudio.buildDefinitions.TMS470_16.6.exe.targetPlatformDebug.575453578" name="Platform" superClass="com.ti.ccstudio.buildDefinitions.TMS470_16.6.exe.targetPlatformDebug"/>
+							<builder buildPath="${BuildDirectory}" id="com.ti.ccstudio.buildDefinitions.TMS470_16.6.exe.builderDebug.1885903198" keepEnvironmentInBuildfile="false" name="GNU Make" superClass="com.ti.ccstudio.buildDefinitions.TMS470_16.6.exe.builderDebug"/>
+							<tool id="com.ti.ccstudio.buildDefinitions.TMS470_16.6.exe.compilerDebug.31940885" name="ARM Compiler" superClass="com.ti.ccstudio.buildDefinitions.TMS470_16.6.exe.compilerDebug">
+								<option id="com.ti.ccstudio.buildDefinitions.TMS470_16.6.compilerID.SILICON_VERSION.1373533226" name="Target processor version (--silicon_version, -mv)" superClass="com.ti.ccstudio.buildDefinitions.TMS470_16.6.compilerID.SILICON_VERSION" value="com.ti.ccstudio.buildDefinitions.TMS470_16.6.compilerID.SILICON_VERSION.7M3" valueType="enumerated"/>
+								<option id="com.ti.ccstudio.buildDefinitions.TMS470_16.6.compilerID.CODE_STATE.1469002600" name="Designate code state, 16-bit (thumb) or 32-bit (--code_state)" superClass="com.ti.ccstudio.buildDefinitions.TMS470_16.6.compilerID.CODE_STATE" value="com.ti.ccstudio.buildDefinitions.TMS470_16.6.compilerID.CODE_STATE.16" valueType="enumerated"/>
+								<option id="com.ti.ccstudio.buildDefinitions.TMS470_16.6.compilerID.ABI.2145159868" name="Application binary interface. (--abi)" superClass="com.ti.ccstudio.buildDefinitions.TMS470_16.6.compilerID.ABI" value="com.ti.ccstudio.buildDefinitions.TMS470_16.6.compilerID.ABI.eabi" valueType="enumerated"/>
+								<option id="com.ti.ccstudio.buildDefinitions.TMS470_16.6.compilerID.FLOAT_SUPPORT.1387851210" name="Specify floating point support (--float_support)" superClass="com.ti.ccstudio.buildDefinitions.TMS470_16.6.compilerID.FLOAT_SUPPORT" value="com.ti.ccstudio.buildDefinitions.TMS470_16.6.compilerID.FLOAT_SUPPORT.vfplib" valueType="enumerated"/>
+								<option id="com.ti.ccstudio.buildDefinitions.TMS470_16.6.compilerID.LITTLE_ENDIAN.1013761094" name="Little endian code [See 'General' page to edit] (--little_endian, -me)" superClass="com.ti.ccstudio.buildDefinitions.TMS470_16.6.compilerID.LITTLE_ENDIAN" value="true" valueType="boolean"/>
+								<option id="com.ti.ccstudio.buildDefinitions.TMS470_16.6.compilerID.OPT_LEVEL.1022648193" name="Optimization level (--opt_level, -O)" superClass="com.ti.ccstudio.buildDefinitions.TMS470_16.6.compilerID.OPT_LEVEL" value="com.ti.ccstudio.buildDefinitions.TMS470_16.6.compilerID.OPT_LEVEL.3" valueType="enumerated"/>
+								<option id="com.ti.ccstudio.buildDefinitions.TMS470_16.6.compilerID.OPT_FOR_SPEED.1617106618" name="Speed vs. size trade-offs (--opt_for_speed, -mf)" superClass="com.ti.ccstudio.buildDefinitions.TMS470_16.6.compilerID.OPT_FOR_SPEED" value="com.ti.ccstudio.buildDefinitions.TMS470_16.6.compilerID.OPT_FOR_SPEED.0" valueType="enumerated"/>
+								<option id="com.ti.ccstudio.buildDefinitions.TMS470_16.6.compilerID.INCLUDE_PATH.281644087" name="Add dir to #include search path (--include_path, -I)" superClass="com.ti.ccstudio.buildDefinitions.TMS470_16.6.compilerID.INCLUDE_PATH" valueType="includePath">
+									<listOptionValue builtIn="false" value="&quot;${SRC_EX}/profiles/hid_dev/cc26xx&quot;"/>
+									<listOptionValue builtIn="false" value="&quot;${SRC_EX}/components/uart_printf&quot;"/>
+									<listOptionValue builtIn="false" value="&quot;${SRC_EX}/profiles/climb&quot;"/>
+									<listOptionValue builtIn="false" value="&quot;${SRC_EX}/profiles/batt/cc26xx&quot;"/>
+									<listOptionValue builtIn="false" value="&quot;${SRC_EX}/profiles/batt&quot;"/>
+									<listOptionValue builtIn="false" value="&quot;${SRC_EX}/profiles/oad/cc26xx&quot;"/>
+									<listOptionValue builtIn="false" value="&quot;${CG_TOOL_ROOT}/include&quot;"/>
+									<listOptionValue builtIn="false" value="&quot;${SRC_BLE_CORE}/controller/cc26xx/inc&quot;"/>
+									<listOptionValue builtIn="false" value="&quot;${SRC_EX}/common/cc26xx&quot;"/>
+									<listOptionValue builtIn="false" value="&quot;${SRC_EX}/icall/inc&quot;"/>
+									<listOptionValue builtIn="false" value="&quot;${SRC_EX}/inc&quot;"/>
+									<listOptionValue builtIn="false" value="&quot;${SRC_EX}/profiles/dev_info&quot;"/>
+									<listOptionValue builtIn="false" value="&quot;${SRC_EX}/profiles/roles/&quot;"/>
+									<listOptionValue builtIn="false" value="&quot;${SRC_EX}/profiles/roles/cc26xx&quot;"/>
+									<listOptionValue builtIn="false" value="&quot;${SRC_EX}/target&quot;"/>
+									<listOptionValue builtIn="false" value="&quot;${SRC_COMMON}/hal/src/inc&quot;"/>
+									<listOptionValue builtIn="false" value="&quot;${SRC_COMMON}/hal/src/target/_common&quot;"/>
+									<listOptionValue builtIn="false" value="&quot;${SRC_COMMON}/hal/src/target/_common/cc26xx&quot;"/>
+									<listOptionValue builtIn="false" value="&quot;${SRC_COMMON}/heapmgr&quot;"/>
+									<listOptionValue builtIn="false" value="&quot;${SRC_COMMON}/icall/src/inc&quot;"/>
+									<listOptionValue builtIn="false" value="&quot;${SRC_COMMON}/osal/src/inc&quot;"/>
+									<listOptionValue builtIn="false" value="&quot;${SRC_COMMON}/services/src/saddr&quot;"/>
+									<listOptionValue builtIn="false" value="&quot;${SRC_COMMON}/services/src/sdata&quot;"/>
+									<listOptionValue builtIn="false" value="&quot;${CC26XXWARE}&quot;"/>
+									<listOptionValue builtIn="false" value="&quot;${TI_RTOS_DRIVERS_BASE}&quot;"/>
+								</option>
+								<option id="com.ti.ccstudio.buildDefinitions.TMS470_16.6.compilerID.DEBUGGING_MODEL.318672423" name="Debugging model" superClass="com.ti.ccstudio.buildDefinitions.TMS470_16.6.compilerID.DEBUGGING_MODEL" value="com.ti.ccstudio.buildDefinitions.TMS470_16.6.compilerID.DEBUGGING_MODEL.SYMDEBUG__DWARF" valueType="enumerated"/>
+								<option id="com.ti.ccstudio.buildDefinitions.TMS470_16.6.compilerID.C_DIALECT.722149048" name="C Dialect" superClass="com.ti.ccstudio.buildDefinitions.TMS470_16.6.compilerID.C_DIALECT" value="com.ti.ccstudio.buildDefinitions.TMS470_16.6.compilerID.C_DIALECT.C99" valueType="enumerated"/>
+								<option id="com.ti.ccstudio.buildDefinitions.TMS470_16.6.compilerID.LANGUAGE_MODE.1455535841" name="Language mode" superClass="com.ti.ccstudio.buildDefinitions.TMS470_16.6.compilerID.LANGUAGE_MODE" value="com.ti.ccstudio.buildDefinitions.TMS470_16.6.compilerID.LANGUAGE_MODE.RELAXED_ANSI" valueType="enumerated"/>
+								<option id="com.ti.ccstudio.buildDefinitions.TMS470_16.6.compilerID.DEFINE.107952965" name="Pre-define NAME (--define, -D)" superClass="com.ti.ccstudio.buildDefinitions.TMS470_16.6.compilerID.DEFINE" valueType="definedSymbols">
+									<listOptionValue builtIn="false" value="INIT_CHILDREN_AS_BEACON_ONLY"/>
+									<listOptionValue builtIn="false" value="xINIT_CHILDREN_AS_COMBO_MODE"/>
+									<listOptionValue builtIn="false" value="FEATURE_OAD"/>
+									<listOptionValue builtIn="false" value="xHIGH_PERFORMANCE"/>
+									<listOptionValue builtIn="false" value="xPRINTF_ENABLED"/>
+									<listOptionValue builtIn="false" value="xWATCHDOGTIMER_EN"/>
+									<listOptionValue builtIn="false" value="OSAL_SNV=1"/>
+									<listOptionValue builtIn="false" value="xGAP_ROLE_ABORT"/>
+									<listOptionValue builtIn="false" value="xPRINT_NODE_INFO_ENABLED"/>
+									<listOptionValue builtIn="false" value="xSTACK_METRICS"/>
+									<listOptionValue builtIn="false" value="xFEATURE_LCD"/>
+									<listOptionValue builtIn="false" value="MAX_PDU_SIZE=108"/>
+									<listOptionValue builtIn="false" value="xMAX_PDU_SIZE=27"/>
+									<listOptionValue builtIn="false" value="MAX_NUM_PDU=5"/>
+									<listOptionValue builtIn="false" value="HEAPMGR_SIZE=6500"/>
+									<listOptionValue builtIn="false" value="xHEAPMGR_SIZE=5000"/>
+									<listOptionValue builtIn="false" value="INCLUDE_RSSI_IN_GATT_DATA"/>
+									<listOptionValue builtIn="false" value="RSSI_INFO_IN_SCAN_RESP"/>
+									<listOptionValue builtIn="false" value="TI_DRIVERS_PIN_INCLUDED"/>
+									<listOptionValue builtIn="false" value="TI_DRIVERS_I2C_INCLUDED"/>
+									<listOptionValue builtIn="false" value="TI_DRIVERS_SPI_INCLUDED"/>
+									<listOptionValue builtIn="false" value="POWER_SAVING"/>
+									<listOptionValue builtIn="false" value="TI_DRIVERS_SPI_DMA_INCLUDED"/>
+									<listOptionValue builtIn="false" value="MAX_NUM_BLE_CONNS=1"/>
+									<listOptionValue builtIn="false" value="CC26XXWARE"/>
+									<listOptionValue builtIn="false" value="ccs"/>
+									<listOptionValue builtIn="false" value="CC2650ST_0120"/>
+									<listOptionValue builtIn="false" value="USE_ICALL"/>
+									<listOptionValue builtIn="false" value="xCACHE_AS_RAM"/>
+									<listOptionValue builtIn="false" value="BOARD_DISPLAY_EXCLUDE_UART"/>
+									<listOptionValue builtIn="false" value="BOARD_DISPLAY_EXCLUDE_LCD"/>
+									<listOptionValue builtIn="false" value="Display_DISABLE_AL"/>
+									<listOptionValue builtIn="false" value="ICALL_MAX_NUM_TASKS=4"/>
+									<listOptionValue builtIn="false" value="ICALL_MAX_NUM_ENTITIES=7"/>
+									<listOptionValue builtIn="false" value="xdc_runtime_Assert_DISABLE_ALL"/>
+									<listOptionValue builtIn="false" value="xdc_runtime_Log_DISABLE_ALL"/>
+									<listOptionValue builtIn="false" value="xCC2650DK_7ID"/>
+									<listOptionValue builtIn="false" value="CC2650STK"/>
+									<listOptionValue builtIn="false" value="CC26XX"/>
+									<listOptionValue builtIn="false" value="DEBUG"/>
+									<listOptionValue builtIn="false" value="xHEAPMGR_METRICS"/>
+								</option>
+								<option id="com.ti.ccstudio.buildDefinitions.TMS470_16.6.compilerID.DIAG_WRAP.1603445519" name="Wrap diagnostic messages (--diag_wrap)" superClass="com.ti.ccstudio.buildDefinitions.TMS470_16.6.compilerID.DIAG_WRAP" value="com.ti.ccstudio.buildDefinitions.TMS470_16.6.compilerID.DIAG_WRAP.off" valueType="enumerated"/>
+								<option id="com.ti.ccstudio.buildDefinitions.TMS470_16.6.compilerID.DIAG_SUPPRESS.1992651660" name="Suppress diagnostic &lt;id&gt; (--diag_suppress, -pds)" superClass="com.ti.ccstudio.buildDefinitions.TMS470_16.6.compilerID.DIAG_SUPPRESS" valueType="stringList">
+									<listOptionValue builtIn="false" value="48"/>
+								</option>
+								<option id="com.ti.ccstudio.buildDefinitions.TMS470_16.6.compilerID.DIAG_WARNING.1157270678" name="Treat diagnostic &lt;id&gt; as warning (--diag_warning, -pdsw)" superClass="com.ti.ccstudio.buildDefinitions.TMS470_16.6.compilerID.DIAG_WARNING" valueType="stringList">
+									<listOptionValue builtIn="false" value="225"/>
+								</option>
+								<option id="com.ti.ccstudio.buildDefinitions.TMS470_16.6.compilerID.DISPLAY_ERROR_NUMBER.1577351809" name="Emit diagnostic identifier numbers (--display_error_number, -pden)" superClass="com.ti.ccstudio.buildDefinitions.TMS470_16.6.compilerID.DISPLAY_ERROR_NUMBER" value="true" valueType="boolean"/>
+								<option id="com.ti.ccstudio.buildDefinitions.TMS470_16.6.compilerID.GEN_FUNC_SUBSECTIONS.507388692" name="Place each function in a separate subsection (--gen_func_subsections, -ms)" superClass="com.ti.ccstudio.buildDefinitions.TMS470_16.6.compilerID.GEN_FUNC_SUBSECTIONS" value="com.ti.ccstudio.buildDefinitions.TMS470_16.6.compilerID.GEN_FUNC_SUBSECTIONS.on" valueType="enumerated"/>
+								<option id="com.ti.ccstudio.buildDefinitions.TMS470_16.6.compilerID.SAT_REASSOC.777523526" name="Allow reassociation of sat arithmetic (--sat_reassoc)" superClass="com.ti.ccstudio.buildDefinitions.TMS470_16.6.compilerID.SAT_REASSOC" value="com.ti.ccstudio.buildDefinitions.TMS470_16.6.compilerID.SAT_REASSOC.off" valueType="enumerated"/>
+								<option id="com.ti.ccstudio.buildDefinitions.TMS470_16.6.compilerID.WCHAR_T.999354579" name="Set the size (in bits) of the C/C++ type wchar_t (16,32) (--wchar_t)" superClass="com.ti.ccstudio.buildDefinitions.TMS470_16.6.compilerID.WCHAR_T" value="com.ti.ccstudio.buildDefinitions.TMS470_16.6.compilerID.WCHAR_T.16" valueType="enumerated"/>
+								<option id="com.ti.ccstudio.buildDefinitions.TMS470_16.6.compilerID.UNALIGNED_ACCESS.213641487" name="Generate unaligned loads and stores (--unaligned_access)" superClass="com.ti.ccstudio.buildDefinitions.TMS470_16.6.compilerID.UNALIGNED_ACCESS" value="com.ti.ccstudio.buildDefinitions.TMS470_16.6.compilerID.UNALIGNED_ACCESS.on" valueType="enumerated"/>
+								<option id="com.ti.ccstudio.buildDefinitions.TMS470_16.6.compilerID.COMMON.683274821" name="Use ELF common symbols (--common)" superClass="com.ti.ccstudio.buildDefinitions.TMS470_16.6.compilerID.COMMON" value="com.ti.ccstudio.buildDefinitions.TMS470_16.6.compilerID.COMMON.on" valueType="enumerated"/>
+								<option id="com.ti.ccstudio.buildDefinitions.TMS470_16.6.compilerID.ENUM_TYPE.1018740104" name="Designate enum type (--enum_type)" superClass="com.ti.ccstudio.buildDefinitions.TMS470_16.6.compilerID.ENUM_TYPE" value="com.ti.ccstudio.buildDefinitions.TMS470_16.6.compilerID.ENUM_TYPE.packed" valueType="enumerated"/>
+								<option id="com.ti.ccstudio.buildDefinitions.TMS470_16.6.compilerID.EMBEDDED_CONSTANTS.875306341" name="Specify whether constants can be embedded in code sections (--embedded_constants)" superClass="com.ti.ccstudio.buildDefinitions.TMS470_16.6.compilerID.EMBEDDED_CONSTANTS" value="com.ti.ccstudio.buildDefinitions.TMS470_16.6.compilerID.EMBEDDED_CONSTANTS.on" valueType="enumerated"/>
+								<option id="com.ti.ccstudio.buildDefinitions.TMS470_16.6.compilerID.PLAIN_CHAR.815423454" name="Specify how to treat plain chars (signed/unsigned) (--plain_char)" superClass="com.ti.ccstudio.buildDefinitions.TMS470_16.6.compilerID.PLAIN_CHAR" value="com.ti.ccstudio.buildDefinitions.TMS470_16.6.compilerID.PLAIN_CHAR.unsigned" valueType="enumerated"/>
+								<option id="com.ti.ccstudio.buildDefinitions.TMS470_16.6.compilerID.FP_REASSOC.490576279" name="Allow reassociation of FP arithmetic (--fp_reassoc)" superClass="com.ti.ccstudio.buildDefinitions.TMS470_16.6.compilerID.FP_REASSOC" value="com.ti.ccstudio.buildDefinitions.TMS470_16.6.compilerID.FP_REASSOC.off" valueType="enumerated"/>
+								<option id="com.ti.ccstudio.buildDefinitions.TMS470_16.6.compilerID.CMD_FILE.1118941723" name="Read options from specified file (--cmd_file, -@)" superClass="com.ti.ccstudio.buildDefinitions.TMS470_16.6.compilerID.CMD_FILE" valueType="stringList">
+									<listOptionValue builtIn="false" value="&quot;${SRC_EX}/config/build_components.opt&quot;"/>
+									<listOptionValue builtIn="false" value="&quot;${PROJECT_IMPORT_LOC}/../../iar/stack/build_config.opt&quot;"/>
+									<listOptionValue builtIn="false" value="&quot;${PROJECT_IMPORT_LOC}/../config/ccs_compiler_defines.bcfg&quot;"/>
+								</option>
+								<inputType id="com.ti.ccstudio.buildDefinitions.TMS470_16.6.compiler.inputType__C_SRCS.327341309" name="C Sources" superClass="com.ti.ccstudio.buildDefinitions.TMS470_16.6.compiler.inputType__C_SRCS"/>
+								<inputType id="com.ti.ccstudio.buildDefinitions.TMS470_16.6.compiler.inputType__CPP_SRCS.893650148" name="C++ Sources" superClass="com.ti.ccstudio.buildDefinitions.TMS470_16.6.compiler.inputType__CPP_SRCS"/>
+								<inputType id="com.ti.ccstudio.buildDefinitions.TMS470_16.6.compiler.inputType__ASM_SRCS.836334246" name="Assembly Sources" superClass="com.ti.ccstudio.buildDefinitions.TMS470_16.6.compiler.inputType__ASM_SRCS"/>
+								<inputType id="com.ti.ccstudio.buildDefinitions.TMS470_16.6.compiler.inputType__ASM2_SRCS.741321736" name="Assembly Sources" superClass="com.ti.ccstudio.buildDefinitions.TMS470_16.6.compiler.inputType__ASM2_SRCS"/>
+							</tool>
+							<tool id="com.ti.ccstudio.buildDefinitions.TMS470_16.6.exe.linkerDebug.2125840978" name="ARM Linker" superClass="com.ti.ccstudio.buildDefinitions.TMS470_16.6.exe.linkerDebug">
+								<option id="com.ti.ccstudio.buildDefinitions.TMS470_16.6.linkerID.STACK_SIZE.1213974252" name="Set C system stack size (--stack_size, -stack)" superClass="com.ti.ccstudio.buildDefinitions.TMS470_16.6.linkerID.STACK_SIZE" value="256" valueType="string"/>
+								<option id="com.ti.ccstudio.buildDefinitions.TMS470_16.6.linkerID.HEAP_SIZE.1857160454" name="Heap size for C/C++ dynamic memory allocation (--heap_size, -heap)" superClass="com.ti.ccstudio.buildDefinitions.TMS470_16.6.linkerID.HEAP_SIZE" value="0" valueType="string"/>
+								<option id="com.ti.ccstudio.buildDefinitions.TMS470_16.6.linkerID.OUTPUT_FILE.736659926" name="Specify output file name (--output_file, -o)" superClass="com.ti.ccstudio.buildDefinitions.TMS470_16.6.linkerID.OUTPUT_FILE" value="&quot;${ProjName}.out&quot;" valueType="string"/>
+								<option id="com.ti.ccstudio.buildDefinitions.TMS470_16.6.linkerID.MAP_FILE.1647198453" name="Link information (map) listed into &lt;file&gt; (--map_file, -m)" superClass="com.ti.ccstudio.buildDefinitions.TMS470_16.6.linkerID.MAP_FILE" value="&quot;${ProjName}.map&quot;" valueType="string"/>
+								<option id="com.ti.ccstudio.buildDefinitions.TMS470_16.6.linkerID.LIBRARY.799210666" name="Include library file or command file as input (--library, -l)" superClass="com.ti.ccstudio.buildDefinitions.TMS470_16.6.linkerID.LIBRARY" valueType="libs">
+									<listOptionValue builtIn="false" value="&quot;libc.a&quot;"/>
+									<listOptionValue builtIn="false" value="&quot;${CC26XXWARE}/driverlib/bin/ccs/driverlib.lib&quot;"/>
+									<listOptionValue builtIn="false" value="&quot;${ROM}/common_rom_releases/03282014/common_rom.symbols&quot;"/>
+								</option>
+								<option id="com.ti.ccstudio.buildDefinitions.TMS470_16.6.linkerID.SEARCH_PATH.2051116645" name="Add &lt;dir&gt; to library search path (--search_path, -i)" superClass="com.ti.ccstudio.buildDefinitions.TMS470_16.6.linkerID.SEARCH_PATH" valueType="libPaths">
+									<listOptionValue builtIn="false" value="&quot;${CG_TOOL_ROOT}/lib&quot;"/>
+									<listOptionValue builtIn="false" value="&quot;${CG_TOOL_ROOT}/include&quot;"/>
+									<listOptionValue builtIn="false" value="&quot;${PROJECT_IMPORT_LOC}/../ccs/config&quot;"/>
+								</option>
+								<option id="com.ti.ccstudio.buildDefinitions.TMS470_16.6.linkerID.DISPLAY_ERROR_NUMBER.586535499" name="Emit diagnostic identifier numbers (--display_error_number)" superClass="com.ti.ccstudio.buildDefinitions.TMS470_16.6.linkerID.DISPLAY_ERROR_NUMBER" value="true" valueType="boolean"/>
+								<option id="com.ti.ccstudio.buildDefinitions.TMS470_16.6.linkerID.DIAG_SUPPRESS.1169926083" name="Suppress diagnostic &lt;id&gt; (--diag_suppress)" superClass="com.ti.ccstudio.buildDefinitions.TMS470_16.6.linkerID.DIAG_SUPPRESS" valueType="stringList">
+									<listOptionValue builtIn="false" value="10247-D"/>
+									<listOptionValue builtIn="false" value="16002-D"/>
+								</option>
+								<option id="com.ti.ccstudio.buildDefinitions.TMS470_16.6.linkerID.DIAG_WRAP.1938830207" name="Wrap diagnostic messages (--diag_wrap)" superClass="com.ti.ccstudio.buildDefinitions.TMS470_16.6.linkerID.DIAG_WRAP" value="com.ti.ccstudio.buildDefinitions.TMS470_16.6.linkerID.DIAG_WRAP.off" valueType="enumerated"/>
+								<option id="com.ti.ccstudio.buildDefinitions.TMS470_16.6.linkerID.XML_LINK_INFO.599972949" name="Detailed link information data-base into &lt;file&gt; (--xml_link_info, -xml_link_info)" superClass="com.ti.ccstudio.buildDefinitions.TMS470_16.6.linkerID.XML_LINK_INFO" value="&quot;${ProjName}_linkInfo.xml&quot;" valueType="string"/>
+								<option id="com.ti.ccstudio.buildDefinitions.TMS470_16.6.linkerID.UNUSED_SECTION_ELIMINATION.1943045771" name="Eliminate sections not needed in the executable (--unused_section_elimination)" superClass="com.ti.ccstudio.buildDefinitions.TMS470_16.6.linkerID.UNUSED_SECTION_ELIMINATION" value="com.ti.ccstudio.buildDefinitions.TMS470_16.6.linkerID.UNUSED_SECTION_ELIMINATION.on" valueType="enumerated"/>
+								<inputType id="com.ti.ccstudio.buildDefinitions.TMS470_16.6.exeLinker.inputType__CMD_SRCS.407142831" name="Linker Command Files" superClass="com.ti.ccstudio.buildDefinitions.TMS470_16.6.exeLinker.inputType__CMD_SRCS"/>
+								<inputType id="com.ti.ccstudio.buildDefinitions.TMS470_16.6.exeLinker.inputType__CMD2_SRCS.891458535" name="Linker Command Files" superClass="com.ti.ccstudio.buildDefinitions.TMS470_16.6.exeLinker.inputType__CMD2_SRCS"/>
+								<inputType id="com.ti.ccstudio.buildDefinitions.TMS470_16.6.exeLinker.inputType__GEN_CMDS.708512715" name="Generated Linker Command Files" superClass="com.ti.ccstudio.buildDefinitions.TMS470_16.6.exeLinker.inputType__GEN_CMDS"/>
+							</tool>
+							<tool id="com.ti.ccstudio.buildDefinitions.TMS470_16.6.hex.783974195" name="ARM Hex Utility" superClass="com.ti.ccstudio.buildDefinitions.TMS470_16.6.hex">
+								<option id="com.ti.ccstudio.buildDefinitions.TMS470_16.6.hex.ROMWIDTH.1352086768" name="Specify rom width (--romwidth, -romwidth=width)" superClass="com.ti.ccstudio.buildDefinitions.TMS470_16.6.hex.ROMWIDTH" value="8" valueType="string"/>
+								<option id="com.ti.ccstudio.buildDefinitions.TMS470_16.6.hex.MEMWIDTH.1826581220" name="Specify memory width (--memwidth, -memwidth=width)" superClass="com.ti.ccstudio.buildDefinitions.TMS470_16.6.hex.MEMWIDTH" value="8" valueType="string"/>
+								<option id="com.ti.ccstudio.buildDefinitions.TMS470_16.6.hex.OUTPUT_FORMAT.1220049987" name="Output format" superClass="com.ti.ccstudio.buildDefinitions.TMS470_16.6.hex.OUTPUT_FORMAT" value="com.ti.ccstudio.buildDefinitions.TMS470_16.6.hex.OUTPUT_FORMAT.INTEL" valueType="enumerated"/>
+							</tool>
+							<tool id="com.ti.rtsc.buildDefinitions.XDC_3.16.tool.172072011" name="XDCtools" superClass="com.ti.rtsc.buildDefinitions.XDC_3.16.tool">
+								<option id="com.ti.rtsc.buildDefinitions.XDC_3.16.tool.XDC_PATH.2001477535" name="Package repositories (--xdcpath)" superClass="com.ti.rtsc.buildDefinitions.XDC_3.16.tool.XDC_PATH" valueType="stringList">
+									<listOptionValue builtIn="false" value="${COM_TI_RTSC_TIRTOSCC13XX_CC26XX_REPOS}"/>
+									<listOptionValue builtIn="false" value="${TARGET_CONTENT_BASE}"/>
+									<listOptionValue builtIn="false" value="${TI_BLE_SDK_BASE}"/>
+								</option>
+								<option id="com.ti.rtsc.buildDefinitions.XDC_3.16.tool.TARGET.1172598091" name="Target (-t)" superClass="com.ti.rtsc.buildDefinitions.XDC_3.16.tool.TARGET" value="ti.targets.arm.elf.M3" valueType="string"/>
+								<option id="com.ti.rtsc.buildDefinitions.XDC_3.16.tool.PLATFORM.370742198" name="Platform (-p)" superClass="com.ti.rtsc.buildDefinitions.XDC_3.16.tool.PLATFORM" value="ti.platforms.simplelink:CC2650F128" valueType="string"/>
+								<option id="com.ti.rtsc.buildDefinitions.XDC_3.16.tool.PLATFORM_RAW.1500975523" name="Platform (-p)" superClass="com.ti.rtsc.buildDefinitions.XDC_3.16.tool.PLATFORM_RAW" value="ti.platforms.simplelink:CC2650F128" valueType="string"/>
+								<option id="com.ti.rtsc.buildDefinitions.XDC_3.16.tool.BUILD_PROFILE.1280865624" name="Build-profile (-r)" superClass="com.ti.rtsc.buildDefinitions.XDC_3.16.tool.BUILD_PROFILE" value="release" valueType="string"/>
+								<option id="com.ti.rtsc.buildDefinitions.XDC_3.16.tool.CODEGEN_TOOL_DIR.1918006913" name="Compiler tools directory (-c)" superClass="com.ti.rtsc.buildDefinitions.XDC_3.16.tool.CODEGEN_TOOL_DIR" value="&quot;${CG_TOOL_ROOT}&quot;" valueType="string"/>
+								<option id="com.ti.rtsc.buildDefinitions.XDC_3.16.tool.COMPILE_OPTIONS.22114150" name="Additional compiler options (--compileOptions)" superClass="com.ti.rtsc.buildDefinitions.XDC_3.16.tool.COMPILE_OPTIONS" value="&quot;${COMPILER_FLAGS} &quot;" valueType="string"/>
+								<option id="com.ti.rtsc.buildDefinitions.XDC_3.16.tool.CFG_ARGS.456397764" name="Configuration script arguments (--cfgArgs)" superClass="com.ti.rtsc.buildDefinitions.XDC_3.16.tool.CFG_ARGS" value="NO_ROM=1,OAD_IMG_E=1" valueType="string"/>
+							</tool>
+						</toolChain>
+					</folderInfo>
+					<sourceEntries>
+						<entry excluding="TOOLS/cc26xx_app.cmd|cc26x0f128.cmd|cc26xx_app.cmd" flags="VALUE_WORKSPACE_PATH|RESOLVED" kind="sourcePath" name=""/>
+					</sourceEntries>
+				</configuration>
+			</storageModule>
+			<storageModule moduleId="org.eclipse.cdt.core.externalSettings"/>
+		</cconfiguration>
 	</storageModule>
 	<storageModule moduleId="org.eclipse.cdt.core.LanguageSettingsProviders"/>
 	<storageModule moduleId="cdtBuildSystem" version="4.0.0">

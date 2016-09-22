@@ -16,7 +16,7 @@ BIOS_INC  = -I"C:/ti/tirtos_cc13xx_cc26xx_2_18_00_03/products/bios_6_45_02_31/pa
 
 TARGET_INC = -I"C:/ti/tirtos_cc13xx_cc26xx_2_18_00_03/products/bios_6_45_02_31/packages/"
 
-INCS = $(BIOS_INC) $(TARGET_INC)  --include_path="f:/workspaces/GIT/CLIMB/climb.stfirmware_BLEstack2.2/ble_sdk_2_02_00_31/src/profiles/hid_dev/cc26xx" --include_path="f:/workspaces/GIT/CLIMB/climb.stfirmware_BLEstack2.2/ble_sdk_2_02_00_31/src/components/uart_printf" --include_path="f:/workspaces/GIT/CLIMB/climb.stfirmware_BLEstack2.2/ble_sdk_2_02_00_31/src/profiles/climb" --include_path="f:/workspaces/GIT/CLIMB/climb.stfirmware_BLEstack2.2/ble_sdk_2_02_00_31/src/profiles/batt/cc26xx" --include_path="f:/workspaces/GIT/CLIMB/climb.stfirmware_BLEstack2.2/ble_sdk_2_02_00_31/src/profiles/batt" --include_path="C:/ti/ccsv6/tools/compiler/ti-cgt-arm_16.6.0.STS/include" --include_path="f:/workspaces/GIT/CLIMB/climb.stfirmware_BLEstack2.2/ble_sdk_2_02_00_31/src/controller/cc26xx/inc" --include_path="f:/workspaces/GIT/CLIMB/climb.stfirmware_BLEstack2.2/ble_sdk_2_02_00_31/src/common/cc26xx" --include_path="f:/workspaces/GIT/CLIMB/climb.stfirmware_BLEstack2.2/ble_sdk_2_02_00_31/src/icall/inc" --include_path="f:/workspaces/GIT/CLIMB/climb.stfirmware_BLEstack2.2/ble_sdk_2_02_00_31/src/inc" --include_path="f:/workspaces/GIT/CLIMB/climb.stfirmware_BLEstack2.2/ble_sdk_2_02_00_31/src/profiles/dev_info" --include_path="f:/workspaces/GIT/CLIMB/climb.stfirmware_BLEstack2.2/ble_sdk_2_02_00_31/src/profiles/roles/" --include_path="f:/workspaces/GIT/CLIMB/climb.stfirmware_BLEstack2.2/ble_sdk_2_02_00_31/src/profiles/roles/cc26xx" --include_path="f:/workspaces/GIT/CLIMB/climb.stfirmware_BLEstack2.2/ble_sdk_2_02_00_31/src/target" --include_path="f:/workspaces/GIT/CLIMB/climb.stfirmware_BLEstack2.2/ble_sdk_2_02_00_31/src/components/hal/src/inc" --include_path="f:/workspaces/GIT/CLIMB/climb.stfirmware_BLEstack2.2/ble_sdk_2_02_00_31/src/components/hal/src/target/_common" --include_path="f:/workspaces/GIT/CLIMB/climb.stfirmware_BLEstack2.2/ble_sdk_2_02_00_31/src/components/hal/src/target/_common/cc26xx" --include_path="f:/workspaces/GIT/CLIMB/climb.stfirmware_BLEstack2.2/ble_sdk_2_02_00_31/src/components/heapmgr" --include_path="f:/workspaces/GIT/CLIMB/climb.stfirmware_BLEstack2.2/ble_sdk_2_02_00_31/src/components/icall/src/inc" --include_path="f:/workspaces/GIT/CLIMB/climb.stfirmware_BLEstack2.2/ble_sdk_2_02_00_31/src/components/osal/src/inc" --include_path="f:/workspaces/GIT/CLIMB/climb.stfirmware_BLEstack2.2/ble_sdk_2_02_00_31/src/components/services/src/saddr" --include_path="f:/workspaces/GIT/CLIMB/climb.stfirmware_BLEstack2.2/ble_sdk_2_02_00_31/src/components/services/src/sdata" --include_path="c:/TI/tirtos_cc13xx_cc26xx_2_18_00_03/products/cc26xxware_2_23_03_17162" --include_path="c:/TI/tirtos_cc13xx_cc26xx_2_18_00_03/products/tidrivers_cc13xx_cc26xx_2_16_01_13/packages"  -IC:/ti/tirtos_cc13xx_cc26xx_2_18_00_03/products/bios_6_45_02_31/packages/ 
+INCS = $(BIOS_INC) $(TARGET_INC)  --include_path="f:/workspaces/GIT/CLIMB/climb.stfirmware_BLEstack2.2/ble_sdk_2_02_00_31/src/profiles/hid_dev/cc26xx" --include_path="f:/workspaces/GIT/CLIMB/climb.stfirmware_BLEstack2.2/ble_sdk_2_02_00_31/src/components/uart_printf" --include_path="f:/workspaces/GIT/CLIMB/climb.stfirmware_BLEstack2.2/ble_sdk_2_02_00_31/src/profiles/climb" --include_path="f:/workspaces/GIT/CLIMB/climb.stfirmware_BLEstack2.2/ble_sdk_2_02_00_31/src/profiles/batt/cc26xx" --include_path="f:/workspaces/GIT/CLIMB/climb.stfirmware_BLEstack2.2/ble_sdk_2_02_00_31/src/profiles/batt" --include_path="f:/workspaces/GIT/CLIMB/climb.stfirmware_BLEstack2.2/ble_sdk_2_02_00_31/src/profiles/oad/cc26xx" --include_path="C:/ti/ccsv6/tools/compiler/ti-cgt-arm_16.6.0.STS/include" --include_path="f:/workspaces/GIT/CLIMB/climb.stfirmware_BLEstack2.2/ble_sdk_2_02_00_31/src/controller/cc26xx/inc" --include_path="f:/workspaces/GIT/CLIMB/climb.stfirmware_BLEstack2.2/ble_sdk_2_02_00_31/src/common/cc26xx" --include_path="f:/workspaces/GIT/CLIMB/climb.stfirmware_BLEstack2.2/ble_sdk_2_02_00_31/src/icall/inc" --include_path="f:/workspaces/GIT/CLIMB/climb.stfirmware_BLEstack2.2/ble_sdk_2_02_00_31/src/inc" --include_path="f:/workspaces/GIT/CLIMB/climb.stfirmware_BLEstack2.2/ble_sdk_2_02_00_31/src/profiles/dev_info" --include_path="f:/workspaces/GIT/CLIMB/climb.stfirmware_BLEstack2.2/ble_sdk_2_02_00_31/src/profiles/roles/" --include_path="f:/workspaces/GIT/CLIMB/climb.stfirmware_BLEstack2.2/ble_sdk_2_02_00_31/src/profiles/roles/cc26xx" --include_path="f:/workspaces/GIT/CLIMB/climb.stfirmware_BLEstack2.2/ble_sdk_2_02_00_31/src/target" --include_path="f:/workspaces/GIT/CLIMB/climb.stfirmware_BLEstack2.2/ble_sdk_2_02_00_31/src/components/hal/src/inc" --include_path="f:/workspaces/GIT/CLIMB/climb.stfirmware_BLEstack2.2/ble_sdk_2_02_00_31/src/components/hal/src/target/_common" --include_path="f:/workspaces/GIT/CLIMB/climb.stfirmware_BLEstack2.2/ble_sdk_2_02_00_31/src/components/hal/src/target/_common/cc26xx" --include_path="f:/workspaces/GIT/CLIMB/climb.stfirmware_BLEstack2.2/ble_sdk_2_02_00_31/src/components/heapmgr" --include_path="f:/workspaces/GIT/CLIMB/climb.stfirmware_BLEstack2.2/ble_sdk_2_02_00_31/src/components/icall/src/inc" --include_path="f:/workspaces/GIT/CLIMB/climb.stfirmware_BLEstack2.2/ble_sdk_2_02_00_31/src/components/osal/src/inc" --include_path="f:/workspaces/GIT/CLIMB/climb.stfirmware_BLEstack2.2/ble_sdk_2_02_00_31/src/components/services/src/saddr" --include_path="f:/workspaces/GIT/CLIMB/climb.stfirmware_BLEstack2.2/ble_sdk_2_02_00_31/src/components/services/src/sdata" --include_path="c:/TI/tirtos_cc13xx_cc26xx_2_18_00_03/products/cc26xxware_2_23_03_17162" --include_path="c:/TI/tirtos_cc13xx_cc26xx_2_18_00_03/products/tidrivers_cc13xx_cc26xx_2_16_01_13/packages" 
 
 CC = C:/ti/ccsv6/tools/compiler/ti-cgt-arm_16.6.0.STS/bin/armcl -c $(CCOPTS) -I C:/ti/ccsv6/tools/compiler/ti-cgt-arm_16.6.0.STS/include
 ASM = C:/ti/ccsv6/tools/compiler/ti-cgt-arm_16.6.0.STS/bin/armcl -c $(CCOPTS) -I C:/ti/ccsv6/tools/compiler/ti-cgt-arm_16.6.0.STS/include
@@ -34,7 +34,7 @@ define ASSEMBLE
 	@$(ASM) $(BIOS_DEFS) $(XOPTS) $(INCS) $<
 endef
 
-all: rom_sysbios.aem3
+all: sysbios.aem3
 
 m3_Hwi_asm.obj: family/arm/m3/Hwi_asm.sv7M makefile
 	@-$(call RM, $@)
@@ -53,32 +53,28 @@ m3_TaskSupport_asm.obj: family/arm/m3/TaskSupport_asm.sv7M makefile
 	$(ASSEMBLE) --output_file=m3_TaskSupport_asm.obj
 
 
-rom_sysbios.obj: BIOS.c knl/Clock.c knl/Idle.c knl/Intrinsics.c knl/Event.c knl/Mailbox.c knl/Queue.c knl/Semaphore.c knl/Swi.c knl/Swi_andn.c knl/Task.c family/arm/m3/Hwi.c family/arm/m3/TaskSupport.c family/arm/cc26xx/Boot.c family/arm/cc26xx/Timer.c family/arm/cc26xx/TimestampProvider.c hal/Hwi.c hal/Hwi_stack.c hal/Hwi_startup.c gates/GateHwi.c gates/GateMutex.c heaps/HeapMem.c xdc/runtime/xdc_noinit.c xdc/runtime/Assert.c xdc/runtime/Core-mem.c xdc/runtime/Core-smem.c xdc/runtime/Core-label.c xdc/runtime/Core-params.c xdc/runtime/Diags.c xdc/runtime/Error.c xdc/runtime/Gate.c xdc/runtime/Log.c xdc/runtime/Memory.c xdc/runtime/Registry.c xdc/runtime/Startup.c xdc/runtime/System.c xdc/runtime/SysCallback.c xdc/runtime/Text.c xdc/runtime/Timestamp.c makefile
+BIOS.obj: BIOS.c knl/Clock.c knl/Idle.c knl/Intrinsics.c knl/Queue.c knl/Semaphore.c knl/Swi.c knl/Swi_andn.c knl/Task.c hal/Hwi.c hal/Hwi_stack.c hal/Hwi_startup.c family/arm/m3/Hwi.c family/arm/m3/TaskSupport.c gates/GateHwi.c gates/GateMutex.c family/arm/cc26xx/Boot.c family/arm/cc26xx/Timer.c xdc/runtime/xdc_noinit.c xdc/runtime/Assert.c xdc/runtime/Core-mem.c xdc/runtime/Core-smem.c xdc/runtime/Core-label.c xdc/runtime/Core-params.c xdc/runtime/Diags.c xdc/runtime/Error.c xdc/runtime/Gate.c xdc/runtime/Log.c xdc/runtime/Memory.c xdc/runtime/HeapMin.c xdc/runtime/Registry.c xdc/runtime/Startup.c xdc/runtime/System.c xdc/runtime/SysCallback.c xdc/runtime/Text.c makefile
 	@-$(call RM, $@)
 	@echo clem3 $< ...
-	@$(CC) $(BIOS_DEFS) $(XOPTS) $(INCS) --output_file=rom_sysbios.obj \
+	@$(CC) $(BIOS_DEFS) $(XOPTS) $(INCS) \
 	$(BIOS_ROOT)BIOS.c \
 	$(BIOS_ROOT)knl/Clock.c \
 	$(BIOS_ROOT)knl/Idle.c \
 	$(BIOS_ROOT)knl/Intrinsics.c \
-	$(BIOS_ROOT)knl/Event.c \
-	$(BIOS_ROOT)knl/Mailbox.c \
 	$(BIOS_ROOT)knl/Queue.c \
 	$(BIOS_ROOT)knl/Semaphore.c \
 	$(BIOS_ROOT)knl/Swi.c \
 	$(BIOS_ROOT)knl/Swi_andn.c \
 	$(BIOS_ROOT)knl/Task.c \
-	$(BIOS_ROOT)family/arm/m3/Hwi.c \
-	$(BIOS_ROOT)family/arm/m3/TaskSupport.c \
-	$(BIOS_ROOT)family/arm/cc26xx/Boot.c \
-	$(BIOS_ROOT)family/arm/cc26xx/Timer.c \
-	$(BIOS_ROOT)family/arm/cc26xx/TimestampProvider.c \
 	$(BIOS_ROOT)hal/Hwi.c \
 	$(BIOS_ROOT)hal/Hwi_stack.c \
 	$(BIOS_ROOT)hal/Hwi_startup.c \
+	$(BIOS_ROOT)family/arm/m3/Hwi.c \
+	$(BIOS_ROOT)family/arm/m3/TaskSupport.c \
 	$(BIOS_ROOT)gates/GateHwi.c \
 	$(BIOS_ROOT)gates/GateMutex.c \
-	$(BIOS_ROOT)heaps/HeapMem.c \
+	$(BIOS_ROOT)family/arm/cc26xx/Boot.c \
+	$(BIOS_ROOT)family/arm/cc26xx/Timer.c \
 	$(XDC_ROOT)xdc/runtime/xdc_noinit.c \
 	$(XDC_ROOT)xdc/runtime/Assert.c \
 	$(XDC_ROOT)xdc/runtime/Core-mem.c \
@@ -90,17 +86,18 @@ rom_sysbios.obj: BIOS.c knl/Clock.c knl/Idle.c knl/Intrinsics.c knl/Event.c knl/
 	$(XDC_ROOT)xdc/runtime/Gate.c \
 	$(XDC_ROOT)xdc/runtime/Log.c \
 	$(XDC_ROOT)xdc/runtime/Memory.c \
+	$(XDC_ROOT)xdc/runtime/HeapMin.c \
 	$(XDC_ROOT)xdc/runtime/Registry.c \
 	$(XDC_ROOT)xdc/runtime/Startup.c \
 	$(XDC_ROOT)xdc/runtime/System.c \
 	$(XDC_ROOT)xdc/runtime/SysCallback.c \
 	$(XDC_ROOT)xdc/runtime/Text.c \
-	$(XDC_ROOT)xdc/runtime/Timestamp.c \
 
-rom_sysbios.aem3: rom_sysbios.obj m3_Hwi_asm.obj m3_Hwi_asm_switch.obj m3_IntrinsicsSupport_asm.obj m3_TaskSupport_asm.obj
+sysbios.aem3: BIOS.obj m3_Hwi_asm.obj m3_Hwi_asm_switch.obj m3_IntrinsicsSupport_asm.obj m3_TaskSupport_asm.obj
 	@-$(call RM, $@)
 	@echo arem3 $^ ...
-	@$(AR) $@ $^ C:/ti/tirtos_cc13xx_cc26xx_2_18_00_03/products/bios_6_45_02_31/packages/ti/sysbios/rom/cortexm/cc26xx/golden/CC26xx/rom_sysbios_config.obj
+	@$(AR) $@ $^
+
 
 clean:
 	@$(DEL) ..\makefile.libs

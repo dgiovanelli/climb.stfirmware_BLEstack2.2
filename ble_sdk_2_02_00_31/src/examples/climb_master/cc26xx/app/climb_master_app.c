@@ -69,6 +69,10 @@
 #include "Keys_Task.h"
 
 #include "battservice.h"
+#if defined(FEATURE_OAD) || defined(IMAGE_INVALIDATE)
+#include "oad_target.h"
+#include "oad.h"
+#endif //FEATURE_OAD || IMAGE_INVALIDATE
 
 #include <xdc/runtime/Types.h>
 #include <ti/sysbios/BIOS.h>
@@ -203,6 +207,11 @@
 #define SBT_TASK_STACK_SIZE                   664
 #endif
 
+#ifdef FEATURE_OAD
+// The size of an OAD packet.
+#define OAD_PACKET_SIZE                       ((OAD_BLOCK_SIZE) + 2)
+#endif // FEATURE_OAD
+
 // Internal Events for RTOS application
 #define SBT_STATE_CHANGE_EVT                  0x0001
 #define SBT_CHAR_CHANGE_EVT                   0x0002
@@ -313,6 +322,12 @@ static ICall_Semaphore sem;
 // Queue object used for app messages
 static Queue_Struct appMsg;
 static Queue_Handle appMsgQueue;
+
+#if defined(FEATURE_OAD)
+// Event data from OAD profile.
+static Queue_Struct oadQ;
+static Queue_Handle hOadQ;
+#endif //FEATURE_OAD
 
 // events flag for internal application events.
 static uint16_t events;
@@ -436,6 +451,9 @@ static void BLE_ConnectionEventHandler_sendAttRsp(void);
 static void simpleTopology_freeAttRsp(uint8_t status);
 static uint8_t simpleTopology_eventCB(gapMultiRoleEvent_t *pEvent);
 static void simpleTopology_charValueChangeCB(uint8_t paramID);
+#ifdef FEATURE_OAD
+void SimpleBLEPeripheral_processOadWriteCB(uint8_t event, uint16_t connHandle,uint8_t *pData);
+#endif //FEATURE_OAD
 
 ////CLIMB MANAGEMENT
 static ClimbNodeType_t isClimbNode(gapDeviceInfoEvent_t *gapDeviceInfoEvent_a);
@@ -512,6 +530,11 @@ static gapBondCBs_t simpleBLEPeripheral_BondMgrCBs = {
 		(pfnPasscodeCB_t)climb_passcodeCB, // Passcode callback
 		climb_pairStateCB
 		};
+
+#ifdef FEATURE_OAD
+static oadTargetCBs_t simpleBLEPeripheral_oadCBs = { (oadWriteCB_t) SimpleBLEPeripheral_processOadWriteCB // Write Callback.
+		};
+#endif //FEATURE_OAD
 
 /*********************************************************************
  * PUBLIC FUNCTIONS
@@ -699,6 +722,16 @@ static void simpleTopology_init(void) {
 
 		// Add battery service.
 		Batt_AddService();
+
+#ifdef FEATURE_OAD
+		VOID OAD_addService();                 // OAD Profile
+		OAD_register((oadTargetCBs_t *) &simpleBLEPeripheral_oadCBs);
+		hOadQ = Util_constructQueue(&oadQ);
+#endif //FEATURE_OAD
+
+#ifdef IMAGE_INVALIDATE
+		Reset_addService();
+#endif //IMAGE_INVALIDATE
 
 		// Register callback with SimpleGATTprofile
 		ClimbProfile_RegisterAppCBs(&simpleTopology_simpleProfileCBs);
@@ -906,6 +939,24 @@ static void simpleTopology_taskFxn(UArg a0, UArg a1) {
 
 			Climb_wakeUpHandler();
 		}
+
+#ifdef FEATURE_OAD
+		while (!Queue_empty(hOadQ)) {
+			oadTargetWrite_t *oadWriteEvt = Queue_dequeue(hOadQ);
+
+			// Identify new image.
+			if (oadWriteEvt->event == OAD_WRITE_IDENTIFY_REQ) {
+				OAD_imgIdentifyWrite(oadWriteEvt->connHandle, oadWriteEvt->pData);
+			}
+			// Write a next block request.
+			else if (oadWriteEvt->event == OAD_WRITE_BLOCK_REQ) {
+				OAD_imgBlockWrite(oadWriteEvt->connHandle, oadWriteEvt->pData);
+			}
+
+			// Free buffer.
+			ICall_free(oadWriteEvt);
+		}
+#endif //FEATURE_OAD
 
 	}
 }
@@ -1600,6 +1651,46 @@ static uint8_t simpleTopology_eventCB(gapMultiRoleEvent_t *pEvent) {
 static void simpleTopology_charValueChangeCB(uint8_t paramID) {
 	simpleTopology_enqueueMsg(SBT_CHAR_CHANGE_EVT, paramID, NULL);
 }
+
+#ifdef FEATURE_OAD
+/*********************************************************************
+ * @fn      SimpleBLEPeripheral_processOadWriteCB
+ *
+ * @brief   Process a write request to the OAD profile.
+ *
+ * @param   event      - event type:
+ *                       OAD_WRITE_IDENTIFY_REQ
+ *                       OAD_WRITE_BLOCK_REQ
+ * @param   connHandle - the connection Handle this request is from.
+ * @param   pData      - pointer to data for processing and/or storing.
+ *
+ * @return  None.
+ */
+void SimpleBLEPeripheral_processOadWriteCB(uint8_t event, uint16_t connHandle,
+                                           uint8_t *pData)
+{
+  oadTargetWrite_t *oadWriteEvt = ICall_malloc( sizeof(oadTargetWrite_t) + \
+                                             sizeof(uint8_t) * OAD_PACKET_SIZE);
+
+  if ( oadWriteEvt != NULL )
+  {
+    oadWriteEvt->event = event;
+    oadWriteEvt->connHandle = connHandle;
+
+    oadWriteEvt->pData = (uint8_t *)(&oadWriteEvt->pData + 1);
+    memcpy(oadWriteEvt->pData, pData, OAD_PACKET_SIZE);
+
+    Queue_enqueue(hOadQ, (Queue_Elem *)oadWriteEvt);
+
+    // Post the application's semaphore.
+    Semaphore_post(sem);
+  }
+  else
+  {
+    // Fail silently.
+  }
+}
+#endif //FEATURE_OAD
 
 /*********************************************************************
  * @fn      isClimbNode
@@ -2471,11 +2562,26 @@ static void CLIMB_handleKeys(uint8 keys) {
 	case BOTH:
 		if( children_init_mode == FALSE ){
 			children_init_mode = TRUE;
-		}else{
+		} else {
 			children_init_mode = FALSE;
 			GAPRole_SetParameter(GAPROLE_ADVERT_DATA, sizeof(defAdvertData), defAdvertData, NULL);
+
+			if (connectionConfigured && connHandle != INVALID_CONNHANDLE) {
+
+				gapUpdateLinkParamReq_t linkParams;
+
+				linkParams.connectionHandle = connHandle;
+				linkParams.intervalMin = 6;
+				linkParams.intervalMax = 10;
+				linkParams.connLatency = 0;
+				linkParams.connTimeout = 100;
+
+				GAP_UpdateLinkParamReq(&linkParams);
+			}
 		}
+
 		break;
+
 	case REED_SWITCH_LONG:
 #if LED_VERBOSITY > 0
 		CLIMB_FlashLed(Board_LED1);
