@@ -181,7 +181,7 @@
 #define CHILD_NODE_ID_LENGTH				  1
 #define MASTER_NODE_ID_LENGTH				  6
 
-#define MAX_SUPPORTED_CHILD_NODES			  70
+#define MAX_SUPPORTED_CHILD_NODES			  10
 #define MAX_SUPPORTED_MASTER_NODES			  10
 #if MAX_SUPPORTED_CHILD_NODES+MAX_SUPPORTED_MASTER_NODES < 80
 #warning MAX_SUPPORTED_CHILD_NODES is low because of debugging pourposes, it can be set to 90
@@ -2745,6 +2745,16 @@ static void CLIMB_handleKeys(uint8 keys) {
 		}
 		break;
 
+	case REED_SWITCH_LONG:
+#if LED_VERBOSITY > 0
+		CLIMB_FlashLed(Board_LED1);
+#endif
+		if(!childInitModeActive){
+			Climb_enterChildInitMode();
+		}else{
+			Climb_exitChildInitMode();
+		}
+		break;
 	default:
 		break;
 	}

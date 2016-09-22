@@ -65,6 +65,7 @@ typedef enum
   RIGHT_LONG,
   LEFT_LONG,
   BOTH,
+  REED_SWITCH_LONG
 } keys_Notifications_t;
 
 /**

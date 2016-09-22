@@ -167,8 +167,8 @@
 #define CHILD_NODE_ID_LENGTH				  1
 #define MASTER_NODE_ID_LENGTH				  6
 
-#define MAX_SUPPORTED_CHILD_NODES			  70
-#define MAX_SUPPORTED_MASTER_NODES			  10
+#define MAX_SUPPORTED_CHILD_NODES			  10
+#define MAX_SUPPORTED_MASTER_NODES			  4
 #if MAX_SUPPORTED_CHILD_NODES + MAX_SUPPORTED_MASTER_NODES < 90
 #warning MAX_SUPPORTED_CHILD_NODES or MAX_SUPPORTED_MASTER_NODES are low because of debugging pourposes, it can be set to 90
 #endif
@@ -2476,7 +2476,11 @@ static void CLIMB_handleKeys(uint8 keys) {
 			GAPRole_SetParameter(GAPROLE_ADVERT_DATA, sizeof(defAdvertData), defAdvertData, NULL);
 		}
 		break;
-
+	case REED_SWITCH_LONG:
+#if LED_VERBOSITY > 0
+		CLIMB_FlashLed(Board_LED1);
+#endif
+		break;
 	default:
 		break;
 	}

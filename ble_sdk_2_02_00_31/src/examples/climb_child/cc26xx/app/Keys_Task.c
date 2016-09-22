@@ -324,6 +324,25 @@ static void rightKeyEvent_Handler(void) {
 
 static void relayEvent_Handler(void){
 
+	if (PIN_getInputValue(Board_RELAY) == 1) {
+		longPressedButtonCheck |= KEY_RELAY_EVT;
+		longPressNotiSent = 0;
+
+		if(Util_isActive(&longPressCheckClock)){
+			Util_startClock(&longPressCheckClock);
+		}else{
+			Util_startClock(&longPressCheckClock);
+		}
+	} else {
+		longPressedButtonCheck &= ~KEY_RELAY_EVT;
+		if(longPressedButtonCheck == 0){
+			Util_stopClock(&longPressCheckClock);
+		}
+
+//		if (Keys_AppCGs && longPressNotiSent == 0) { //it is better to disable short pressure callbacks
+//			Keys_AppCGs->pfnKeysNotification(RIGHT_SHORT);
+//		}
+	}
 }
 
 static void longPress_Handler(void){
@@ -342,17 +361,19 @@ static void longPress_Handler(void){
 		}
 	}
 
-	if (longPressedButtonCheck == KEY_RIGHT_EVT | KEY_LEFT_EVT) { //pressione lunga di entrambi
+	if (longPressedButtonCheck == (KEY_RIGHT_EVT | KEY_LEFT_EVT)) { //pressione lunga di entrambi
 		longPressedButtonCheck = 0;
 		if (PIN_getInputValue(Board_KEY_RIGHT) == 0 && PIN_getInputValue(Board_KEY_LEFT) == 0) {
-			while((PIN_getInputValue(Board_KEY_RIGHT) == 0 || PIN_getInputValue(Board_KEY_LEFT) == 0)){
-				//delay_ms(100);
-				DELAY_MS(100);
-			}
 			Keys_AppCGs->pfnKeysNotification(BOTH);
-			//HCI_EXT_ResetSystemCmd(HCI_EXT_RESET_SYSTEM_HARD);
 		}
 
+	}
+
+	if (longPressedButtonCheck == KEY_RELAY_EVT) { //pressione lunga dell'interruttore magnetico
+		longPressedButtonCheck = 0;
+		if (PIN_getInputValue(Board_RELAY) == 1) {
+			Keys_AppCGs->pfnKeysNotification(REED_SWITCH_LONG);
+		}
 	}
 
 	longPressNotiSent = 1;

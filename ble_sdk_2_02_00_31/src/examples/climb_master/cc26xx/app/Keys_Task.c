@@ -117,8 +117,9 @@ static PIN_Config KeysPinTable[] =
 {
     Board_KEY_LEFT   | PIN_INPUT_EN | PIN_PULLUP | PIN_IRQ_BOTHEDGES | PIN_HYSTERESIS,        /* Button is active low          */
     Board_KEY_RIGHT  | PIN_INPUT_EN | PIN_PULLUP | PIN_IRQ_BOTHEDGES | PIN_HYSTERESIS,        /* Button is active low          */
-//    Board_RELAY      | PIN_INPUT_EN | PIN_PULLDOWN | PIN_IRQ_BOTHEDGES | PIN_HYSTERESIS,      /* Relay is active high          */
-
+#ifdef CC2650STK
+    Board_RELAY      | PIN_INPUT_EN | PIN_PULLDOWN | PIN_IRQ_BOTHEDGES | PIN_HYSTERESIS,      /* Relay is active high          */
+#endif
     PIN_TERMINATE
 };
 
@@ -323,6 +324,25 @@ static void rightKeyEvent_Handler(void) {
 
 static void relayEvent_Handler(void){
 
+	if (PIN_getInputValue(Board_RELAY) == 1) {
+		longPressedButtonCheck |= KEY_RELAY_EVT;
+		longPressNotiSent = 0;
+
+		if(Util_isActive(&longPressCheckClock)){
+			Util_startClock(&longPressCheckClock);
+		}else{
+			Util_startClock(&longPressCheckClock);
+		}
+	} else {
+		longPressedButtonCheck &= ~KEY_RELAY_EVT;
+		if(longPressedButtonCheck == 0){
+			Util_stopClock(&longPressCheckClock);
+		}
+
+//		if (Keys_AppCGs && longPressNotiSent == 0) { //it is better to disable short pressure callbacks
+//			Keys_AppCGs->pfnKeysNotification(RIGHT_SHORT);
+//		}
+	}
 }
 
 static void longPress_Handler(void){
@@ -341,17 +361,19 @@ static void longPress_Handler(void){
 		}
 	}
 
-	if (longPressedButtonCheck == KEY_RIGHT_EVT | KEY_LEFT_EVT) { //pressione lunga di entrambi
+	if (longPressedButtonCheck == (KEY_RIGHT_EVT | KEY_LEFT_EVT)) { //pressione lunga di entrambi
 		longPressedButtonCheck = 0;
 		if (PIN_getInputValue(Board_KEY_RIGHT) == 0 && PIN_getInputValue(Board_KEY_LEFT) == 0) {
-			while((PIN_getInputValue(Board_KEY_RIGHT) == 0 || PIN_getInputValue(Board_KEY_LEFT) == 0)){
-				//delay_ms(100);
-				DELAY_MS(100);
-			}
 			Keys_AppCGs->pfnKeysNotification(BOTH);
-			//HCI_EXT_ResetSystemCmd(HCI_EXT_RESET_SYSTEM_HARD);
 		}
 
+	}
+
+	if (longPressedButtonCheck == KEY_RELAY_EVT) { //pressione lunga dell'interruttore magnetico
+		longPressedButtonCheck = 0;
+		if (PIN_getInputValue(Board_RELAY) == 1) {
+			Keys_AppCGs->pfnKeysNotification(REED_SWITCH_LONG);
+		}
 	}
 
 	longPressNotiSent = 1;
@@ -378,10 +400,11 @@ static void Key_callback(PIN_Handle handle, PIN_Id pinId)
 	if(pinId == Board_KEY_RIGHT){
 		keysTask_setEvent(KEY_RIGHT_EVT);
 	}
-#warning Board_RELAY
-//	if(pinId == Board_RELAY){
-//		keysTask_setEvent(KEY_RELAY_EVT);
-//	}
+#ifdef CC2650STK
+	if(pinId == Board_RELAY){
+		keysTask_setEvent(KEY_RELAY_EVT);
+	}
+#endif
 }
 
 /*********************************************************************
