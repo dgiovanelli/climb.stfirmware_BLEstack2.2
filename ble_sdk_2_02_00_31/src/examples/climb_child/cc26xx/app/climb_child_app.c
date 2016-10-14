@@ -1576,6 +1576,11 @@ static void BLE_AdvertiseEventHandler(void) {
 	}else{
 		CLIMB_FlashLed(Board_LED2);
 	}
+#elif LED_VERBOSITY > 0
+	if (childInitModeActive) {//flash led only when it is in initmode
+		CLIMB_FlashLed(Board_LED1);
+	} else {
+	}
 #endif
 #ifdef PRINTF_ENABLED
 		System_printf("\nAdvertise event\n");
