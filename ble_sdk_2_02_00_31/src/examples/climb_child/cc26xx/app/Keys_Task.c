@@ -256,11 +256,14 @@ static void keysTaskFxn(UArg a0, UArg a1)
         rightKeyEvent_Handler();
 
       }
+#ifdef CC2650STK
       if (events & KEY_RELAY_EVT){
          events &= ~KEY_RELAY_EVT;
 
          relayEvent_Handler();
       }
+#endif
+
       if (events & LONG_PRESSURE_TIMEOUT_EVT){
          events &= ~LONG_PRESSURE_TIMEOUT_EVT;
 
@@ -323,7 +326,7 @@ static void rightKeyEvent_Handler(void) {
 }
 
 static void relayEvent_Handler(void){
-
+#ifdef CC2650STK
 	if (PIN_getInputValue(Board_RELAY) == 1) {
 		longPressedButtonCheck |= KEY_RELAY_EVT;
 		longPressNotiSent = 0;
@@ -343,6 +346,7 @@ static void relayEvent_Handler(void){
 //			Keys_AppCGs->pfnKeysNotification(RIGHT_SHORT);
 //		}
 	}
+#endif
 }
 
 static void longPress_Handler(void){
@@ -368,14 +372,14 @@ static void longPress_Handler(void){
 		}
 
 	}
-
+#ifdef CC2650STK
 	if (longPressedButtonCheck == KEY_RELAY_EVT) { //pressione lunga dell'interruttore magnetico
 		longPressedButtonCheck = 0;
 		if (PIN_getInputValue(Board_RELAY) == 1) {
 			Keys_AppCGs->pfnKeysNotification(REED_SWITCH_LONG);
 		}
 	}
-
+#endif
 	longPressNotiSent = 1;
 
 
