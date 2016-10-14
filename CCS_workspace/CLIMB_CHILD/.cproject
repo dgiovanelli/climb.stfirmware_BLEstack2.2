@@ -83,7 +83,7 @@
 									<listOptionValue builtIn="false" value="xPRINTF_ENABLED"/>
 									<listOptionValue builtIn="false" value="xHIGH_PERFORMANCE"/>
 									<listOptionValue builtIn="false" value="xINCLUDE_BATTERY_SERVICE"/>
-									<listOptionValue builtIn="false" value="LED_VERBOSITY=2"/>
+									<listOptionValue builtIn="false" value="LED_VERBOSITY=0"/>
 									<listOptionValue builtIn="false" value="GAP_ROLE_ABORT"/>
 									<listOptionValue builtIn="false" value="xWATCHDOGTIMER_EN"/>
 									<listOptionValue builtIn="false" value="OSAL_SNV=1"/>
@@ -195,7 +195,7 @@
 						</toolChain>
 					</folderInfo>
 					<sourceEntries>
-						<entry excluding="cc26xx_app_oad.cmd|TOOLS/cc26xx_app_oad.cmd|cc26x0f128.cmd|cc26xx_app.cmd|Profiles/battservice.c|Middleware/extflash/ExtFlash.c|Middleware/sensortag/SensorTagTest.c|Profiles/devinfoservice.c" flags="VALUE_WORKSPACE_PATH|RESOLVED" kind="sourcePath" name=""/>
+						<entry excluding="Middleware/sensors|Middleware/extflash|cc26xx_app_oad.cmd|TOOLS/cc26xx_app_oad.cmd|cc26x0f128.cmd|cc26xx_app.cmd|Profiles/battservice.c|Middleware/extflash/ExtFlash.c|Middleware/sensortag/SensorTagTest.c|Profiles/devinfoservice.c" flags="VALUE_WORKSPACE_PATH|RESOLVED" kind="sourcePath" name=""/>
 					</sourceEntries>
 				</configuration>
 			</storageModule>
@@ -285,7 +285,7 @@
 									<listOptionValue builtIn="false" value="xPRINTF_ENABLED"/>
 									<listOptionValue builtIn="false" value="xHIGH_PERFORMANCE"/>
 									<listOptionValue builtIn="false" value="xINCLUDE_BATTERY_SERVICE"/>
-									<listOptionValue builtIn="false" value="LED_VERBOSITY=2"/>
+									<listOptionValue builtIn="false" value="LED_VERBOSITY=1"/>
 									<listOptionValue builtIn="false" value="GAP_ROLE_ABORT"/>
 									<listOptionValue builtIn="false" value="xWATCHDOGTIMER_EN"/>
 									<listOptionValue builtIn="false" value="OSAL_SNV=1"/>
@@ -296,8 +296,8 @@
 									<listOptionValue builtIn="false" value="xMAX_PDU_SIZE=108"/>
 									<listOptionValue builtIn="false" value="MAX_PDU_SIZE=27"/>
 									<listOptionValue builtIn="false" value="MAX_NUM_PDU=4"/>
-									<listOptionValue builtIn="false" value="xHEAPMGR_SIZE=6900"/>
-									<listOptionValue builtIn="false" value="HEAPMGR_SIZE=3500"/>
+									<listOptionValue builtIn="false" value="HEAPMGR_SIZE=6900"/>
+									<listOptionValue builtIn="false" value="xHEAPMGR_SIZE=3500"/>
 									<listOptionValue builtIn="false" value="TI_DRIVERS_PIN_INCLUDED"/>
 									<listOptionValue builtIn="false" value="TI_DRIVERS_I2C_INCLUDED"/>
 									<listOptionValue builtIn="false" value="TI_DRIVERS_SPI_INCLUDED"/>

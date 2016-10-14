@@ -249,7 +249,7 @@
 								<option id="com.ti.ccstudio.buildDefinitions.TMS470_16.6.compilerID.ABI.2145159868" name="Application binary interface. (--abi)" superClass="com.ti.ccstudio.buildDefinitions.TMS470_16.6.compilerID.ABI" value="com.ti.ccstudio.buildDefinitions.TMS470_16.6.compilerID.ABI.eabi" valueType="enumerated"/>
 								<option id="com.ti.ccstudio.buildDefinitions.TMS470_16.6.compilerID.FLOAT_SUPPORT.1387851210" name="Specify floating point support (--float_support)" superClass="com.ti.ccstudio.buildDefinitions.TMS470_16.6.compilerID.FLOAT_SUPPORT" value="com.ti.ccstudio.buildDefinitions.TMS470_16.6.compilerID.FLOAT_SUPPORT.vfplib" valueType="enumerated"/>
 								<option id="com.ti.ccstudio.buildDefinitions.TMS470_16.6.compilerID.LITTLE_ENDIAN.1013761094" name="Little endian code [See 'General' page to edit] (--little_endian, -me)" superClass="com.ti.ccstudio.buildDefinitions.TMS470_16.6.compilerID.LITTLE_ENDIAN" value="true" valueType="boolean"/>
-								<option id="com.ti.ccstudio.buildDefinitions.TMS470_16.6.compilerID.OPT_LEVEL.1022648193" name="Optimization level (--opt_level, -O)" superClass="com.ti.ccstudio.buildDefinitions.TMS470_16.6.compilerID.OPT_LEVEL" value="com.ti.ccstudio.buildDefinitions.TMS470_16.6.compilerID.OPT_LEVEL.3" valueType="enumerated"/>
+								<option id="com.ti.ccstudio.buildDefinitions.TMS470_16.6.compilerID.OPT_LEVEL.1022648193" name="Optimization level (--opt_level, -O)" superClass="com.ti.ccstudio.buildDefinitions.TMS470_16.6.compilerID.OPT_LEVEL" value="com.ti.ccstudio.buildDefinitions.TMS470_16.6.compilerID.OPT_LEVEL.4" valueType="enumerated"/>
 								<option id="com.ti.ccstudio.buildDefinitions.TMS470_16.6.compilerID.OPT_FOR_SPEED.1617106618" name="Speed vs. size trade-offs (--opt_for_speed, -mf)" superClass="com.ti.ccstudio.buildDefinitions.TMS470_16.6.compilerID.OPT_FOR_SPEED" value="com.ti.ccstudio.buildDefinitions.TMS470_16.6.compilerID.OPT_FOR_SPEED.0" valueType="enumerated"/>
 								<option id="com.ti.ccstudio.buildDefinitions.TMS470_16.6.compilerID.INCLUDE_PATH.281644087" name="Add dir to #include search path (--include_path, -I)" superClass="com.ti.ccstudio.buildDefinitions.TMS470_16.6.compilerID.INCLUDE_PATH" valueType="includePath">
 									<listOptionValue builtIn="false" value="&quot;${SRC_EX}/profiles/hid_dev/cc26xx&quot;"/>
@@ -296,7 +296,7 @@
 									<listOptionValue builtIn="false" value="MAX_PDU_SIZE=108"/>
 									<listOptionValue builtIn="false" value="xMAX_PDU_SIZE=27"/>
 									<listOptionValue builtIn="false" value="MAX_NUM_PDU=5"/>
-									<listOptionValue builtIn="false" value="HEAPMGR_SIZE=6500"/>
+									<listOptionValue builtIn="false" value="HEAPMGR_SIZE=6600"/>
 									<listOptionValue builtIn="false" value="xHEAPMGR_SIZE=5000"/>
 									<listOptionValue builtIn="false" value="INCLUDE_RSSI_IN_GATT_DATA"/>
 									<listOptionValue builtIn="false" value="RSSI_INFO_IN_SCAN_RESP"/>
@@ -321,7 +321,7 @@
 									<listOptionValue builtIn="false" value="xCC2650DK_7ID"/>
 									<listOptionValue builtIn="false" value="CC2650STK"/>
 									<listOptionValue builtIn="false" value="CC26XX"/>
-									<listOptionValue builtIn="false" value="DEBUG"/>
+									<listOptionValue builtIn="false" value="xDEBUG"/>
 									<listOptionValue builtIn="false" value="xHEAPMGR_METRICS"/>
 								</option>
 								<option id="com.ti.ccstudio.buildDefinitions.TMS470_16.6.compilerID.DIAG_WRAP.1603445519" name="Wrap diagnostic messages (--diag_wrap)" superClass="com.ti.ccstudio.buildDefinitions.TMS470_16.6.compilerID.DIAG_WRAP" value="com.ti.ccstudio.buildDefinitions.TMS470_16.6.compilerID.DIAG_WRAP.off" valueType="enumerated"/>

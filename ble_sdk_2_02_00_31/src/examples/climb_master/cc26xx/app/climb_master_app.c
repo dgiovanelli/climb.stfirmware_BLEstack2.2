@@ -162,7 +162,7 @@
 
 #warning CHECK TIMEOUTS
 #define WAKEUP_DEFAULT_TIMEOUT_SEC				60*60*24 //set this to zero to disable automatic wake up
-#define GOTOSLEEP_DEFAULT_TIMEOUT_SEC			1*60*60 //set this to zero to disable automatic sleep
+#define GOTOSLEEP_DEFAULT_TIMEOUT_SEC			3*60*60 //set this to zero to disable automatic sleep
 #define GOTOSLEEP_POSTPONE_INTERVAL_SEC			5*60
 
 #define MAX_ALLOWED_TIMER_DURATION_SEC	      42000 //actual max timer duration 42949.67sec
@@ -171,8 +171,8 @@
 #define CHILD_NODE_ID_LENGTH				  1
 #define MASTER_NODE_ID_LENGTH				  6
 
-#define MAX_SUPPORTED_CHILD_NODES			  10
-#define MAX_SUPPORTED_MASTER_NODES			  4
+#define MAX_SUPPORTED_CHILD_NODES			  80
+#define MAX_SUPPORTED_MASTER_NODES			  10
 #if MAX_SUPPORTED_CHILD_NODES + MAX_SUPPORTED_MASTER_NODES < 90
 #warning MAX_SUPPORTED_CHILD_NODES or MAX_SUPPORTED_MASTER_NODES are low because of debugging pourposes, it can be set to 90
 #endif
