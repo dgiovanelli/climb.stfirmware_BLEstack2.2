@@ -101,8 +101,8 @@
  */
 // Advertising interval when device is discoverable (units of 625us, 160=100ms)
 #ifdef HIGH_PERFORMANCE
-#define DEFAULT_CONNECTABLE_ADVERTISING_INTERVAL          240
-#define DEFAULT_NON_CONNECTABLE_ADVERTISING_INTERVAL          240
+#define DEFAULT_CONNECTABLE_ADVERTISING_INTERVAL          1600
+#define DEFAULT_NON_CONNECTABLE_ADVERTISING_INTERVAL          1600
 #else
 #define DEFAULT_CONNECTABLE_ADVERTISING_INTERVAL          1600
 #define DEFAULT_NON_CONNECTABLE_ADVERTISING_INTERVAL          DEFAULT_CONNECTABLE_ADVERTISING_INTERVAL
@@ -219,7 +219,11 @@
 
 #define MAX_ALLOWED_TIMER_DURATION_SEC	      42000 //actual max timer duration 42949.67sec
 
+#ifdef HIGH_PERFORMANCE
+#define DEFAULT_BEACON_MODE					  COMBO_MODE//BEACON_ONLY
+#else
 #define DEFAULT_BEACON_MODE					  BEACON_ONLY
+#endif
 // Task configuration
 #define SBT_TASK_PRIORITY                     1
 
@@ -895,22 +899,24 @@ static void simpleTopology_init(void) {
 		}
 	} else {  // the flash did not contain a valid configuration. Proceed with normal boot
 //automatically start-up the node
-#warning the node is configured to start as childInitModeActive automatically upon power up
-		Climb_enterChildInitMode();
-		//events |= WAKEUP_TIMEOUT_EVT;
-		//Semaphore_post(sem);
+#ifdef AUTOMATICALLY_ENETER_INIT_MODE_AT_STARTUP
+	Climb_enterChildInitMode();
+#else //else of AUTOMATICALLY_ENETER_INIT_MODE_AT_STARTUP
+#ifdef AUTOMATICALLY_TURN_ON_AT_STARTUP
+#if 1
+	//this doesn't set the wake up timer
+	startNode();
+#else
+	//this start the node and set the wake up timer
+	events |= WAKEUP_TIMEOUT_EVT;
+	Semaphore_post(sem);
+#endif
+#else
+	//do nothing
+#warning At the startup the node remains in sleep
+#endif //end of AUTOMATICALLY_TURN_ON_AT_STARTUP
+#endif //end of AUTOMATICALLY_ENETER_INIT_MODE_AT_STARTUP
 	}
-
-//#if defined FEATURE_OAD
-//#if defined (HAL_IMAGE_A)
-//  Display_print0(dispHandle, 0, 0, "BLE Peripheral A");
-//#else
-//  Display_print0(dispHandle, 0, 0, "BLE Peripheral B");
-//#endif // HAL_IMAGE_A
-//#else
-//  Display_print0(dispHandle, 0, 0, "BLE Peripheral");
-//#endif // FEATURE_OAD
-
 }
 
 /*********************************************************************
@@ -2259,6 +2265,9 @@ static void Climb_updateMyBroadcastedState(ChildClimbNodeStateType_t newState) {
 			}
 
 		}
+#ifdef LOCALIZATION_TESTING
+		destroyChildNodeList(); //this is called to avoid old data to be included into packet
+#endif
 		adv_startNodeIndex = nodeArrayIndex;
 
 		newAdvertData[i++] = (uint8) (batteryLev >> 8);
@@ -2705,7 +2714,7 @@ static void CLIMB_handleKeys(uint8 keys) {
 			Climb_setWakeUpClock(WAKEUP_DEFAULT_TIMEOUT_SEC);
 			Util_restartClock(&goToSleepClock, GOTOSLEEP_DEFAULT_TIMEOUT_SEC*1000);
 
-		}else{ //if manually switched off, no automatic wakeup is setted
+		}else{ //if manually switched off, no automatic wakeup is set
 			stopNode();
 
 #if LED_VERBOSITY > 0
