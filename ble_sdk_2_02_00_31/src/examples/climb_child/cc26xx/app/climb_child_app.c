@@ -149,7 +149,7 @@
 // Scan duration in ms
 #define DEFAULT_SCAN_DURATION                 1250//10000 //Tempo di durata di una scansione,
 
-#define PRE_ADV_TIMEOUT				 		  DEFAULT_NON_CONNECTABLE_ADVERTISING_INTERVAL*0.625-10 //DEFAULT_ADVERTISING_INTERVAL*0.625-5
+#define PRE_ADV_TIMEOUT				 		  DEFAULT_NON_CONNECTABLE_ADVERTISING_INTERVAL*0.625//DEFAULT_NON_CONNECTABLE_ADVERTISING_INTERVAL*0.625-10
 
 // Whether to report all contacts or only the first for each device
 #define FILTER_ADV_REPORTS					  FALSE
@@ -297,7 +297,7 @@ typedef struct {
 	//uint8 scnDataLen;
 	//uint8 scnData[31];
 	uint32 lastContactTicks;
-	uint8 rssi;
+	int8 rssi;
 	//ChildClimbNodeStateType_t stateToImpose;
 } myGapDevRec_t;
 
@@ -543,6 +543,7 @@ static uint8 Climb_checkNodeState(gapDeviceInfoEvent_t *gapDeviceInfoEvent_a);
 static ChildClimbNodeStateType_t Climb_findMyBroadcastedState(gapDeviceInfoEvent_t *gapDeviceInfoEvent_a);
 static uint8 Climb_decodeBroadcastedMessage(gapDeviceInfoEvent_t *gapDeviceInfoEvent_a);
 static void Climb_updateMyBroadcastedState(ChildClimbNodeStateType_t newState);
+static void Climb_invalidateChildNodesRSSI(void);
 static void Climb_nodeTimeoutCheck(void);
 static void Climb_removeNode(uint8 indexToRemove, ClimbNodeType_t nodeType);
 static void destroyChildNodeList(void);
@@ -876,7 +877,7 @@ static void simpleTopology_init(void) {
 			case (uint8) BEACON_ONLY:	//only accept valid data
 			case (uint8) COMBO_MODE:
 				beacon_mode = (ClimbBeaconMode_t)snv_stored_conf[STORED_CONFIGURATION_MODE_OFFSET];
-				//beacon_mode = DEFAULT_BEACON_MODE;
+				//beacon_mode = DEFAULT_BEACON_MODE; //TODO: CHECK, using this line the DEFAULT_BEACON_MODE is not used, instead it uses the stored value
 				break;
 
 			default:
@@ -1568,11 +1569,16 @@ static void BLE_AdvertiseEventHandler(void) {
 
 		if (childInitModeActive) { // when it's childInitModeActive enable the preAdvEvt so that the discovery is kept active, otherwise after 2 seconds it will be turned off
 			//temp_tick_3 = Clock_getTicks();
-			Util_startClock(&preAdvClock);
+			Util_restartClock(&preAdvClock, PRE_ADV_TIMEOUT - 10);
 		}
 	} else {
-		//temp_tick_3 = Clock_getTicks();
-		Util_startClock(&preAdvClock);
+		if (!childInitModeActive) {
+			//temp_tick_3 = Clock_getTicks();
+			float randDelay_msec = 10 * ((float) Util_GetTRNG()) / 4294967296;
+		    Util_restartClock(&preAdvClock, PRE_ADV_TIMEOUT + randDelay_msec);
+			uint8_t adv_active = 0;
+			GAPRole_SetParameter(GAPROLE_ADV_NONCONN_ENABLED, sizeof(uint8_t), &adv_active, NULL);
+		}
 	}
 
 
@@ -2247,13 +2253,14 @@ static void Climb_updateMyBroadcastedState(ChildClimbNodeStateType_t newState) {
 		while (i < 27 && roundCompleted == FALSE) {
 
 			if (isNonZero(childListArray[nodeArrayIndex].id, CHILD_NODE_ID_LENGTH)) { //discard empty spaces
-
 				memcpy(&newAdvertData[i], childListArray[nodeArrayIndex].id, CHILD_NODE_ID_LENGTH);
 				i += CHILD_NODE_ID_LENGTH;
-				newAdvertData[i++] = childListArray[nodeArrayIndex].rssi;
-
+				newAdvertData[i++] = (uint8_t)childListArray[nodeArrayIndex].rssi;
+//#ifdef LOCALIZATION_TESTING
+//				Climb_removeNode(nodeArrayIndex, CLIMB_CHILD_NODE);
+//#endif
 			}
-
+			Climb_invalidateChildNodesRSSI();
 			nodeArrayIndex++;
 
 			if (nodeArrayIndex >= MAX_SUPPORTED_CHILD_NODES) {
@@ -2265,9 +2272,9 @@ static void Climb_updateMyBroadcastedState(ChildClimbNodeStateType_t newState) {
 			}
 
 		}
-#ifdef LOCALIZATION_TESTING
-		destroyChildNodeList(); //this is called to avoid old data to be included into packet
-#endif
+//#ifdef LOCALIZATION_TESTING
+//		destroyChildNodeList(); //this is called to avoid old data to be included into packet
+//#endif
 		adv_startNodeIndex = nodeArrayIndex;
 
 		newAdvertData[i++] = (uint8) (batteryLev >> 8);
@@ -2282,6 +2289,13 @@ static void Climb_updateMyBroadcastedState(ChildClimbNodeStateType_t newState) {
 	//GAP_UpdateAdvertisingData(selfEntity, false, 13,	&advertData[0]);
 
 	return;
+}
+
+static void Climb_invalidateChildNodesRSSI(void){
+	uint8_t i;
+	for (i = 0; i < MAX_SUPPORTED_CHILD_NODES; i++) {
+		childListArray[i].rssi = abs(childListArray[i].rssi);
+	}
 }
 /*********************************************************************
  * @fn      Climb_nodeTimeoutCheck
@@ -2454,6 +2468,11 @@ static void Climb_enterChildInitMode(void){
     if (Util_isActive(&connectableTimeoutClock)){
     	Util_stopClock(&connectableTimeoutClock);
     }
+
+    if (Util_isActive(&preAdvClock)){
+    	Util_stopClock(&preAdvClock);
+    }
+
     Util_restartClock(&connectableTimeoutClock, CONNECTABLE_TIMEOUT_MSEC);
 
     uint8 status = GAPRole_StartDiscovery(DEFAULT_DISCOVERY_MODE, DEFAULT_DISCOVERY_ACTIVE_SCAN, DEFAULT_DISCOVERY_WHITE_LIST); // Discovery is started so that it is possible to set the clock and eventually the ID
@@ -2539,19 +2558,23 @@ static void Climb_periodicTask(void){
 }
 
 static void Climb_preAdvEvtHandler(){
-	if(beacon_mode == COMBO_MODE){
+	if (beacon_mode == COMBO_MODE) {
 #ifdef HIGH_PERFORMANCE
-	GAPRole_CancelDiscovery();
-	scanning = FALSE;
+		GAPRole_CancelDiscovery();
+		scanning = FALSE;
 #endif
-	adv_counter++;
+		adv_counter++;
 
-	if ((adv_counter - 1) % 60 == 0) {
-		batteryLev = AONBatMonBatteryVoltageGet();
-		batteryLev = (batteryLev * 125) >> 5;
-	}
+		if ((adv_counter - 1) % 60 == 0) {
+			batteryLev = AONBatMonBatteryVoltageGet();
+			batteryLev = (batteryLev * 125) >> 5;
+		}
 
-	Climb_updateMyBroadcastedState(nodeState); //update adv data every adv event to update adv_counter value. Since the argument is nodeState this function call doesn't modify the actual state of this node
+		Climb_updateMyBroadcastedState(nodeState); //update adv data every adv event to update adv_counter value. Since the argument is nodeState this function call doesn't modify the actual state of this node
+		if (!childInitModeActive && nodeTurnedOn) {
+			uint8_t adv_active = 1;
+			GAPRole_SetParameter(GAPROLE_ADV_NONCONN_ENABLED, sizeof(uint8_t), &adv_active, NULL);
+		}
 	}
 
 	if (!scanning) {
@@ -2822,6 +2845,7 @@ static void stopNode() {
 	uint8 status = GAPRole_SetParameter(GAPROLE_ADV_NONCONN_ENABLED, sizeof(uint8_t), &adv_active, NULL);
 
 	Util_stopClock(&periodicClock);
+	Util_stopClock(&preAdvClock);
 
 }
 
