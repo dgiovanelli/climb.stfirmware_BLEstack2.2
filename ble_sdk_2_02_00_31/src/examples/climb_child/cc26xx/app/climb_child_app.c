@@ -101,8 +101,8 @@
  */
 // Advertising interval when device is discoverable (units of 625us, 160=100ms)
 #ifdef HIGH_PERFORMANCE
-#define DEFAULT_CONNECTABLE_ADVERTISING_INTERVAL          1600
-#define DEFAULT_NON_CONNECTABLE_ADVERTISING_INTERVAL          1600
+#define DEFAULT_CONNECTABLE_ADVERTISING_INTERVAL          160
+#define DEFAULT_NON_CONNECTABLE_ADVERTISING_INTERVAL          160
 #else
 #define DEFAULT_CONNECTABLE_ADVERTISING_INTERVAL          1600
 #define DEFAULT_NON_CONNECTABLE_ADVERTISING_INTERVAL          DEFAULT_CONNECTABLE_ADVERTISING_INTERVAL
@@ -1584,9 +1584,25 @@ static void BLE_AdvertiseEventHandler(void) {
 
 #if LED_VERBOSITY > 1
 	if( childInitModeActive ){
-		CLIMB_FlashLed(Board_LED1);
+		if( DEFAULT_NON_CONNECTABLE_ADVERTISING_INTERVAL < 800){
+			static uint8_t divider_counter = 0;
+			if(divider_counter%4==0){
+				CLIMB_FlashLed(Board_LED1);
+			}
+			divider_counter++;
+		}else{
+			CLIMB_FlashLed(Board_LED1);
+		}
 	}else{
-		CLIMB_FlashLed(Board_LED2);
+		if( DEFAULT_CONNECTABLE_ADVERTISING_INTERVAL < 800){
+			static uint8_t divider_counter = 0;
+			if(divider_counter%4==0){
+				CLIMB_FlashLed(Board_LED2);
+			}
+			divider_counter++;
+		}else{
+			CLIMB_FlashLed(Board_LED2);
+		}
 	}
 #elif LED_VERBOSITY > 0
 	if (childInitModeActive) {//flash led only when it is in initmode
