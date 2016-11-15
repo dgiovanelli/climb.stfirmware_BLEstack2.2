@@ -2260,7 +2260,6 @@ static void Climb_updateMyBroadcastedState(ChildClimbNodeStateType_t newState) {
 //				Climb_removeNode(nodeArrayIndex, CLIMB_CHILD_NODE);
 //#endif
 			}
-			Climb_invalidateChildNodesRSSI();
 			nodeArrayIndex++;
 
 			if (nodeArrayIndex >= MAX_SUPPORTED_CHILD_NODES) {
@@ -2272,6 +2271,7 @@ static void Climb_updateMyBroadcastedState(ChildClimbNodeStateType_t newState) {
 			}
 
 		}
+		Climb_invalidateChildNodesRSSI();
 //#ifdef LOCALIZATION_TESTING
 //		destroyChildNodeList(); //this is called to avoid old data to be included into packet
 //#endif
